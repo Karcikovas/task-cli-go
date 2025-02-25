@@ -13,7 +13,7 @@ func NewUpdate() *Update {
 }
 
 func (c *Update) Run() {
-	log.Println("CLI Update command doing stuff ")
+	log.Println("Cli Update command doing stuff ")
 
 }
 

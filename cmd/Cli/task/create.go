@@ -13,7 +13,7 @@ func NewCreate() *Create {
 }
 
 func (c *Create) Run() {
-	log.Println("CLI Create Command")
+	log.Println("Cli Create Command")
 }
 
 func (c *Create) GetCmd() *console.Console {

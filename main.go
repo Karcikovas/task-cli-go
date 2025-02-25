@@ -2,21 +2,15 @@ package main
 
 import (
 	"task-cli-go/cmd"
-	taskCli "task-cli-go/cmd/cli/task"
-	"task-cli-go/internal/console"
-	//"task-cli-go/internal/storage"
-	//"task-cli-go/internal/task"
+	"task-cli-go/cmd/Cli"
+	//"task-Cli-go/internal/storage"
+	//"task-Cli-go/internal/task"
 )
 
 func main() {
 
-	//Register all cli commands
-	create := taskCli.NewCreate()
-	update := taskCli.NewUpdate()
-	del := taskCli.NewDelete()
-
-	//Init CLI Command and register them
-	r := cmd.NewRoot([]console.Command{create, update, del})
+	cli := Cli.NewCLi()
+	r := cmd.NewRoot(cli.GetCommands())
 	r.Register()
 
 	//External services which need to be removed

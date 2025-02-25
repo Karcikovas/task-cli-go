@@ -13,7 +13,7 @@ func NewDelete() *Delete {
 }
 
 func (c *Delete) Run() {
-	log.Println("CLI Delete Command")
+	log.Println("Cli Delete Command")
 }
 
 func (c *Delete) GetCmd() *console.Console {

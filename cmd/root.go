@@ -17,11 +17,11 @@ func NewRoot(commands []console.Command) *Root {
 }
 
 func (r *Root) Register() {
-	log.Println("Available cli command")
+	log.Println("Available Cli command")
 
 	for _, command := range r.commands {
 		c := command.GetCmd()
 
-		log.Println(fmt.Sprintf("task-cli: %s", c.Name))
+		log.Println(fmt.Sprintf("task-Cli: %s", c.Name))
 	}
 }
