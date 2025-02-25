@@ -16,7 +16,7 @@ func NewRoot(commands []console.Command) *Root {
 	}
 }
 
-func (r *Root) Register() {
+func (r *Root) AvailableCommands() {
 	log.Println("Available Cli command")
 
 	for _, command := range r.commands {
