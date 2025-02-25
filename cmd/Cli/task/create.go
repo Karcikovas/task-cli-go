@@ -2,6 +2,7 @@ package task
 
 import (
 	"log"
+	"os"
 	"task-cli-go/internal/console"
 )
 
@@ -13,7 +14,9 @@ func NewCreate() *Create {
 }
 
 func (c *Create) Run() {
-	log.Println("Cli Create Command")
+	args := os.Args
+
+	log.Println("Create task ", args[1:])
 }
 
 func (c *Create) GetCmd() *console.Console {

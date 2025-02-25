@@ -12,27 +12,28 @@ func main() {
 	cli := Cli.NewCLi()
 	r := cmd.NewRoot(cli.GetCommands())
 
+	//TODO: move this into package
 	args := os.Args
-	// Check if the user provided an argument
-	//if len(args) < 2 {
-	//	fmt.Println("Usage: mycli <command>")
-	//	return
-	//}
+	if len(args) < 2 {
+		r.AvailableCommands()
+		return
+	}
 
-	// Handle different commands
 	command := args[1]
 
+	//TODO: Need to remove this switch case to something more flexible
 	switch command {
 	case "create":
-		cli.GetCommands()[0].Run()
+		cli.CompleteCommand("create").Run()
 	case "update":
-		cli.GetCommands()[1].Run()
+		cli.CompleteCommand("update").Run()
 	case "delete":
-		cli.GetCommands()[2].Run()
+		cli.CompleteCommand("delete").Run()
 	default:
 		r.AvailableCommands()
 	}
 
+	//TODO: Move this to internal cli command
 	//External services which need to be removed
 	//s := storage.CreateNewStorage()
 	//t := task.CreateNewTask(s)

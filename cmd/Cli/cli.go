@@ -28,3 +28,9 @@ func (c *Cli) GetCommands() []console.Command {
 
 	return commands
 }
+
+func (c *Cli) CompleteCommand(name string) console.Command {
+	command := c.commands[name]
+
+	return command
+}
