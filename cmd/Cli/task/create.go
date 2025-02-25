@@ -17,6 +17,19 @@ func (c *Create) Run() {
 	args := os.Args
 
 	log.Println("Create task ", args[1:])
+
+	//TODO: Move this to internal cli command
+	//External services which need to be removed
+	//s := storage.CreateNewStorage()
+	//t := task.CreateNewTask(s)
+	//
+	//t.CreateTask(task.TaskDTO{
+	//	Id:          "1",
+	//	Description: "Testing",
+	//	Status:      "In Progress",
+	//	CreatedAt:   nil,
+	//	UpdatedAt:   nil,
+	//})
 }
 
 func (c *Create) GetCmd() *console.Console {
