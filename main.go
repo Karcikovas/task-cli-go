@@ -4,8 +4,6 @@ import (
 	"os"
 	"task-cli-go/cmd"
 	"task-cli-go/cmd/Cli"
-	//"task-Cli-go/internal/storage"
-	//"task-Cli-go/internal/task"
 )
 
 func main() {
