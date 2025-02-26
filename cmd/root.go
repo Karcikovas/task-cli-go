@@ -22,6 +22,6 @@ func (r *Root) AvailableCommands() {
 	for _, command := range r.commands {
 		c := command.GetCmd()
 
-		log.Println(fmt.Sprintf("task-Cli: %s", c.Name))
+		log.Println(fmt.Sprintf("task-Cli: %s --- %s", c.Name, c.Description))
 	}
 }

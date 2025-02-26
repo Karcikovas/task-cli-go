@@ -1,6 +1,9 @@
 package storage
 
 import (
+	"bufio"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -8,6 +11,9 @@ import (
 
 var Location = "internal/storage"
 var Format = "json"
+var StorageFileLocation = fmt.Sprintf(`%s/storage.%s`, Location, Format)
+
+type Data map[string]interface{}
 
 type Storage struct {
 }
@@ -17,32 +23,89 @@ func CreateNewStorage() *Storage {
 }
 
 func (s *Storage) Save(v []byte, k string) {
-	exist := s.storageExists()
+	file, err := os.Open(StorageFileLocation)
+	data := make(Data)
 
-	if !exist {
+	if err != nil {
 		s.createFile()
+	} else {
+		decoder := json.NewDecoder(file)
+		err := decoder.Decode(&data)
+
+		if err != nil {
+			panic(ErrUnableToDecodeFile)
+		}
 	}
 
-	os.WriteFile("storage.json", v, 0644)
+	data[k] = v
 
-	log.Println(v, k)
+	file, err = os.Create(StorageFileLocation)
+
+	if err != nil {
+		return
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
+	encoder.Encode(data)
+}
+
+func (s *Storage) Delete(k string) {
+	data, err := s.getAllStorageData()
+
+	if err != nil {
+		panic(ErrUnableToGetAllStorageItems)
+	}
+
+	log.Println(data, k)
 }
 
 func (s *Storage) createFile() {
-	f, err := os.Create(fmt.Sprintf(`%s/storage.%s`, Location, Format))
+	file, err := os.Create(StorageFileLocation)
 
 	if err != nil {
 		panic(ErrUnableToCreateNewStorageFile)
-		log.Fatal(err)
 	}
 
-	defer f.Close()
+	defer file.Close()
 }
 
-func (s *Storage) storageExists() bool {
-	if _, err := os.Stat(fmt.Sprintf(`%s/storage.%s`, Location, Format)); err == nil {
-		return true
-	} else {
-		return false
+func (s *Storage) getAllStorageData() (*Data, error) {
+	data := make(Data)
+	file, err := os.Open(StorageFileLocation)
+
+	if err != nil {
+		panic(ErrUnableToReadFile)
+
+		return nil, err
 	}
+
+	scanner := bufio.NewScanner(file)
+	var jsonData map[string]string
+
+	content := ""
+	for scanner.Scan() {
+		content += scanner.Text()
+	}
+
+	err = json.Unmarshal([]byte(content), &jsonData)
+	if err != nil {
+		panic(ErrUnableToUnmarshalJson)
+
+		return nil, err
+	}
+
+	for key, encodedValue := range jsonData {
+		decodedValue, err := base64.StdEncoding.DecodeString(encodedValue)
+		if err != nil {
+			panic(ErrUnableToDecodeFile)
+
+			return nil, err
+		}
+
+		data[key] = string(decodedValue)
+	}
+
+	return &data, nil
 }

@@ -41,6 +41,6 @@ func (t *Task) updateTask() {
 
 }
 
-func (t *Task) deleteTask() {
-
+func (t *Task) DeleteTask(taskID string) {
+	t.storage.Delete(taskID)
 }

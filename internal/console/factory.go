@@ -1,15 +1,17 @@
 package console
 
-type CommandAction func()
+type CommandAction func(args string)
 
 type Console struct {
-	Name string
-	run  CommandAction
+	Name        string
+	Description string
+	run         CommandAction
 }
 
-func NewConsoleCommand(name string, runCommand CommandAction) *Console {
+func NewConsoleCommand(name string, description string, runCommand CommandAction) *Console {
 	return &Console{
-		Name: name,
-		run:  runCommand,
+		Name:        name,
+		Description: description,
+		run:         runCommand,
 	}
 }

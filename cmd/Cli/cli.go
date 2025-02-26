@@ -3,18 +3,19 @@ package Cli
 import (
 	taskCli "task-cli-go/cmd/Cli/task"
 	"task-cli-go/internal/console"
+	"task-cli-go/internal/task"
 )
 
 type Cli struct {
 	commands map[string]console.Command
 }
 
-func NewCLi() *Cli {
+func NewCLi(task *task.Task) *Cli {
 	return &Cli{
 		commands: map[string]console.Command{
-			"create": taskCli.NewCreate(),
+			"add":    taskCli.NewAdd(task),
 			"update": taskCli.NewUpdate(),
-			"delete": taskCli.NewDelete(),
+			"delete": taskCli.NewDelete(task),
 		},
 	}
 }

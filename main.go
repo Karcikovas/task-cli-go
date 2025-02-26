@@ -1,33 +1,49 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"os"
+	"strings"
 	"task-cli-go/cmd"
 	"task-cli-go/cmd/Cli"
+	"task-cli-go/internal/storage"
+	"task-cli-go/internal/task"
 )
 
 func main() {
-	cli := Cli.NewCLi()
+	//TODO: move this like wire function for building dependencies
+	s := storage.CreateNewStorage()
+	t := task.CreateNewTask(s)
+	cli := Cli.NewCLi(t)
 	r := cmd.NewRoot(cli.GetCommands())
 
-	//TODO: move this into package
-	args := os.Args
-	if len(args) < 2 {
-		r.AvailableCommands()
-		return
-	}
+	scanner := bufio.NewScanner(os.Stdin)
 
-	command := args[1]
-
-	//TODO: Need to remove this switch case to something more flexible
-	switch command {
-	case "create":
-		cli.CompleteCommand("create").Run()
-	case "update":
-		cli.CompleteCommand("update").Run()
-	case "delete":
-		cli.CompleteCommand("delete").Run()
-	default:
+	for {
 		r.AvailableCommands()
+		fmt.Print("Enter your choice: ")
+
+		scanner.Scan()
+		input := scanner.Text()
+
+		parts := strings.Fields(input)
+		if len(parts) == 0 {
+			continue
+		}
+
+		command := parts[0]
+		args := strings.Join(parts[1:], " ")
+
+		switch command {
+		case "add":
+			cli.CompleteCommand("add").Run(args)
+		case "update":
+			cli.CompleteCommand("update").Run(args)
+		case "delete":
+			cli.CompleteCommand("delete").Run(args)
+		default:
+			r.AvailableCommands()
+		}
 	}
 }
