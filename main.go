@@ -42,6 +42,8 @@ func main() {
 			cli.CompleteCommand("update").Run(args)
 		case "delete":
 			cli.CompleteCommand("delete").Run(args)
+		case "list":
+			cli.CompleteCommand("list").Run(args)
 		default:
 			r.AvailableCommands()
 		}

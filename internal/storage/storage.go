@@ -10,7 +10,7 @@ import (
 
 var Location = "internal/storage"
 var Format = "json"
-var StorageFileLocation = fmt.Sprintf(`%s/storage.%s`, Location, Format)
+var FileLocation = fmt.Sprintf(`%s/storage.%s`, Location, Format)
 
 type Data map[string]interface{}
 
@@ -22,7 +22,7 @@ func CreateNewStorage() *Storage {
 }
 
 func (s *Storage) Save(v []byte, k string) {
-	file, err := os.Open(StorageFileLocation)
+	file, err := os.Open(FileLocation)
 	data := make(Data)
 
 	if err != nil {
@@ -38,7 +38,7 @@ func (s *Storage) Save(v []byte, k string) {
 
 	data[k] = v
 
-	file, err = os.Create(StorageFileLocation)
+	file, err = os.Create(FileLocation)
 
 	if err != nil {
 		return
@@ -51,7 +51,7 @@ func (s *Storage) Save(v []byte, k string) {
 }
 
 func (s *Storage) Delete(k string) {
-	data, err := s.getAllStorageData()
+	data, err := s.GetAllStorageData()
 
 	if err != nil {
 		panic(ErrUnableToGetAllStorageItems)
@@ -63,7 +63,7 @@ func (s *Storage) Delete(k string) {
 }
 
 func (s *Storage) createFile() {
-	file, err := os.Create(StorageFileLocation)
+	file, err := os.Create(FileLocation)
 
 	if err != nil {
 		panic(ErrUnableToCreateNewStorageFile)
@@ -72,9 +72,9 @@ func (s *Storage) createFile() {
 	defer file.Close()
 }
 
-func (s *Storage) getAllStorageData() (Data, error) {
+func (s *Storage) GetAllStorageData() (Data, error) {
 	data := make(Data)
-	file, err := os.Open(StorageFileLocation)
+	file, err := os.Open(FileLocation)
 
 	if err != nil {
 		panic(ErrUnableToReadFile)
@@ -112,7 +112,7 @@ func (s *Storage) getAllStorageData() (Data, error) {
 }
 
 func (s *Storage) storeAllData(data Data) {
-	file, err := os.Create(StorageFileLocation)
+	file, err := os.Create(FileLocation)
 
 	defer file.Close()
 

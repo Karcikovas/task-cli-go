@@ -16,6 +16,7 @@ func NewCLi(task *task.Task) *Cli {
 			"add":    taskCli.NewAdd(task),
 			"update": taskCli.NewUpdate(),
 			"delete": taskCli.NewDelete(task),
+			"list":   taskCli.NewList(task),
 		},
 	}
 }

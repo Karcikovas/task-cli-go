@@ -8,6 +8,12 @@ import (
 	"time"
 )
 
+var (
+	DONE       = "done"
+	TODO       = "todo"
+	InPROGRESS = "in-progress"
+)
+
 type Task struct {
 	storage *storage.Storage
 }
@@ -23,7 +29,7 @@ func (t *Task) CreateTask(task TaskDTO) {
 
 	newTask := TaskDTO{
 		Id:          task.Id,
-		Description: task.Description,
+		Description: TODO,
 		Status:      task.Status,
 		CreatedAt:   &now,
 		UpdatedAt:   &now,
@@ -38,12 +44,29 @@ func (t *Task) CreateTask(task TaskDTO) {
 	t.storage.Save(data, fmt.Sprintf(`task-%s-data`, task.Id))
 }
 
-func (t *Task) updateTask() {
-
-}
-
 func (t *Task) DeleteTask(taskID string) {
 	t.storage.Delete(fmt.Sprintf(`task-%s-data`, taskID))
 
 	log.Println("Task has been deleted")
 }
+
+func (t *Task) UpdateTask() {
+
+}
+
+func (t *Task) GetAllTasks() []TaskDTO {
+	var list []TaskDTO
+	data, err := t.storage.GetAllStorageData()
+
+	if err != nil {
+		log.Println("negerai")
+	}
+
+	for _, value := range data {
+		log.Println(value)
+	}
+
+	return list
+}
+
+func (t *Task) GetTaskByStatus(status string) {}
