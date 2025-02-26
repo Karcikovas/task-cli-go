@@ -3,6 +3,7 @@ package task
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"task-cli-go/internal/storage"
 	"time"
 )
@@ -42,5 +43,7 @@ func (t *Task) updateTask() {
 }
 
 func (t *Task) DeleteTask(taskID string) {
-	t.storage.Delete(taskID)
+	t.storage.Delete(fmt.Sprintf(`task-%s-data`, taskID))
+
+	log.Println("Task has been deleted")
 }

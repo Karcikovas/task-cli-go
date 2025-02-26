@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 )
 
@@ -58,7 +57,9 @@ func (s *Storage) Delete(k string) {
 		panic(ErrUnableToGetAllStorageItems)
 	}
 
-	log.Println(data, k)
+	delete(data, k)
+
+	s.storeAllData(data)
 }
 
 func (s *Storage) createFile() {
@@ -71,7 +72,7 @@ func (s *Storage) createFile() {
 	defer file.Close()
 }
 
-func (s *Storage) getAllStorageData() (*Data, error) {
+func (s *Storage) getAllStorageData() (Data, error) {
 	data := make(Data)
 	file, err := os.Open(StorageFileLocation)
 
@@ -107,5 +108,19 @@ func (s *Storage) getAllStorageData() (*Data, error) {
 		data[key] = string(decodedValue)
 	}
 
-	return &data, nil
+	return data, nil
+}
+
+func (s *Storage) storeAllData(data Data) {
+	file, err := os.Create(StorageFileLocation)
+
+	defer file.Close()
+
+	if err != nil {
+		return
+	}
+
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
+	encoder.Encode(data)
 }
