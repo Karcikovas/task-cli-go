@@ -2,9 +2,7 @@ package task
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
-	"strconv"
 	"task-cli-go/internal/storage"
 	"time"
 )
@@ -43,11 +41,11 @@ func (t *Task) CreateTask(task TaskDTO) {
 		panic(ErrUnableToCreateNewTask)
 	}
 
-	t.storage.Save(data, fmt.Sprintf(`task-%s-data`, strconv.Itoa(task.Id)))
+	t.storage.InsertOrUpdate(data)
 }
 
-func (t *Task) DeleteTask(taskID string) {
-	t.storage.Delete(fmt.Sprintf(`task-%s-data`, taskID))
+func (t *Task) DeleteTask(taskID int) {
+	t.storage.Delete(taskID)
 
 	log.Println("Task has been deleted")
 }
@@ -58,7 +56,7 @@ func (t *Task) UpdateTask() {
 
 func (t *Task) GetAllTasks() []TaskDTO {
 	var list []TaskDTO
-	data, err := t.storage.GetAllStorageData()
+	data, err := t.storage.GetAll()
 
 	if err != nil {
 		log.Println("negerai")

@@ -16,9 +16,10 @@ type Data struct {
 }
 
 type Repository interface {
+	GetOneBy(id int) (string, error)
 	GetAll() (Data, error)
-	InsertOrUpdate(v []byte)
-	Delete(id int)
+	InsertOrUpdate(v []byte) (string, error)
+	Delete(id int) (bool, error)
 }
 
 type Storage struct {
@@ -28,7 +29,12 @@ func CreateNewStorage() Repository {
 	return &Storage{}
 }
 
-func (s *Storage) InsertOrUpdate(v []byte) {
+func (s *Storage) GetOneBy(id int) (string, error) {
+
+	return "asdas", nil
+}
+
+func (s *Storage) InsertOrUpdate(v []byte) (string, error) {
 	data, _ := s.readFile()
 
 	if data.Total == 0 {
@@ -39,10 +45,12 @@ func (s *Storage) InsertOrUpdate(v []byte) {
 	data.Records = append(data.Records, string(v))
 
 	s.writeFile(data)
+
+	return string(v), nil
 }
 
-func (s *Storage) Delete(id int) {
-
+func (s *Storage) Delete(id int) (bool, error) {
+	return false, nil
 }
 
 func (s *Storage) GetAll() (Data, error) {
