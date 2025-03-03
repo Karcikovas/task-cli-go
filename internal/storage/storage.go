@@ -2,17 +2,18 @@ package storage
 
 import (
 	"bufio"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
+	"strings"
 )
 
 var Location = "internal/storage"
-var Format = "json"
+var Format = "txt"
 var FileLocation = fmt.Sprintf(`%s/storage.%s`, Location, Format)
 
-type Data map[string]interface{}
+type Data map[string][]byte
 
 type Storage struct {
 }
@@ -27,13 +28,6 @@ func (s *Storage) Save(v []byte, k string) {
 
 	if err != nil {
 		s.createFile()
-	} else {
-		decoder := json.NewDecoder(file)
-		err := decoder.Decode(&data)
-
-		if err != nil {
-			panic(ErrUnableToDecodeFile)
-		}
 	}
 
 	data[k] = v
@@ -43,11 +37,14 @@ func (s *Storage) Save(v []byte, k string) {
 	if err != nil {
 		return
 	}
-	defer file.Close()
 
-	encoder := json.NewEncoder(file)
-	encoder.SetIndent("", "  ")
-	encoder.Encode(data)
+	_, err = file.WriteString(fmt.Sprintf(`%s->%s`, k, string(v)))
+
+	if err != nil {
+		return
+	}
+
+	defer file.Close()
 }
 
 func (s *Storage) Delete(k string) {
@@ -62,16 +59,6 @@ func (s *Storage) Delete(k string) {
 	s.storeAllData(data)
 }
 
-func (s *Storage) createFile() {
-	file, err := os.Create(FileLocation)
-
-	if err != nil {
-		panic(ErrUnableToCreateNewStorageFile)
-	}
-
-	defer file.Close()
-}
-
 func (s *Storage) GetAllStorageData() (Data, error) {
 	data := make(Data)
 	file, err := os.Open(FileLocation)
@@ -83,32 +70,30 @@ func (s *Storage) GetAllStorageData() (Data, error) {
 	}
 
 	scanner := bufio.NewScanner(file)
-	var jsonData map[string]string
 
 	content := ""
 	for scanner.Scan() {
 		content += scanner.Text()
-	}
+		result := strings.Split(content, "->")
 
-	err = json.Unmarshal([]byte(content), &jsonData)
-	if err != nil {
-		panic(ErrUnableToUnmarshalJson)
+		log.Println(len(result))
+		k := result[0]
+		v := []byte(result[1])
 
-		return nil, err
-	}
-
-	for key, encodedValue := range jsonData {
-		decodedValue, err := base64.StdEncoding.DecodeString(encodedValue)
-		if err != nil {
-			panic(ErrUnableToDecodeFile)
-
-			return nil, err
-		}
-
-		data[key] = string(decodedValue)
+		data[k] = v
 	}
 
 	return data, nil
+}
+
+func (s *Storage) createFile() {
+	file, err := os.Create(FileLocation)
+
+	if err != nil {
+		panic(ErrUnableToCreateNewStorageFile)
+	}
+
+	defer file.Close()
 }
 
 func (s *Storage) storeAllData(data Data) {

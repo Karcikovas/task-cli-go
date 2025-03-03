@@ -17,7 +17,7 @@ func NewAdd(task *task.Task) *Add {
 
 func (c *Add) Run(args string) {
 	c.task.CreateTask(task.TaskDTO{
-		Id:          "2",
+		Id:          "3",
 		Description: args,
 		Status:      "In Progress",
 		CreatedAt:   nil,

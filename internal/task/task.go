@@ -29,8 +29,8 @@ func (t *Task) CreateTask(task TaskDTO) {
 
 	newTask := TaskDTO{
 		Id:          task.Id,
-		Description: TODO,
-		Status:      task.Status,
+		Description: task.Description,
+		Status:      TODO,
 		CreatedAt:   &now,
 		UpdatedAt:   &now,
 	}
@@ -63,7 +63,15 @@ func (t *Task) GetAllTasks() []TaskDTO {
 	}
 
 	for _, value := range data {
-		log.Println(value)
+		var task TaskDTO
+
+		err = json.Unmarshal(value, &task)
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		list = append(list, task)
 	}
 
 	return list
