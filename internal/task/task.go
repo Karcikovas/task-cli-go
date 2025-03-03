@@ -14,10 +14,10 @@ var (
 )
 
 type Task struct {
-	storage *storage.Storage
+	storage storage.Repository
 }
 
-func CreateNewTask(storage *storage.Storage) *Task {
+func CreateNewTask(storage storage.Repository) *Task {
 	return &Task{
 		storage: storage,
 	}
