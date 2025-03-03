@@ -1,19 +1,19 @@
 package storage
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
-	"strings"
 )
 
 var Location = "internal/storage"
-var Format = "txt"
+var Format = "json"
 var FileLocation = fmt.Sprintf(`%s/storage.%s`, Location, Format)
 
-type Data map[string][]byte
+type Data struct {
+	Total   int      `json:"total"`
+	Records []string `json:"records"`
+}
 
 type Storage struct {
 }
@@ -23,67 +23,57 @@ func CreateNewStorage() *Storage {
 }
 
 func (s *Storage) Save(v []byte, k string) {
-	file, err := os.Open(FileLocation)
-	data := make(Data)
+	data, _ := s.readFile()
 
-	if err != nil {
+	if data.Total == 0 {
 		s.createFile()
 	}
 
-	data[k] = v
+	data.Total += 1
+	data.Records = append(data.Records, string(v))
 
-	file, err = os.Create(FileLocation)
-
-	if err != nil {
-		return
-	}
-
-	_, err = file.WriteString(fmt.Sprintf(`%s->%s`, k, string(v)))
-
-	if err != nil {
-		return
-	}
-
-	defer file.Close()
+	s.writeFile(data)
 }
 
 func (s *Storage) Delete(k string) {
-	data, err := s.GetAllStorageData()
 
-	if err != nil {
-		panic(ErrUnableToGetAllStorageItems)
-	}
-
-	delete(data, k)
-
-	s.storeAllData(data)
 }
 
 func (s *Storage) GetAllStorageData() (Data, error) {
-	data := make(Data)
-	file, err := os.Open(FileLocation)
+	return s.readFile()
+}
+
+func (s *Storage) readFile() (Data, error) {
+	content, err := os.ReadFile(FileLocation)
 
 	if err != nil {
-		panic(ErrUnableToReadFile)
-
-		return nil, err
+		return Data{
+			Total:   0,
+			Records: []string{},
+		}, err
 	}
 
-	scanner := bufio.NewScanner(file)
+	storage := Data{}
 
-	content := ""
-	for scanner.Scan() {
-		content += scanner.Text()
-		result := strings.Split(content, "->")
+	err = json.Unmarshal(content, &storage)
+	if err != nil {
+		return storage, err
+	}
+	return storage, nil
+}
 
-		log.Println(len(result))
-		k := result[0]
-		v := []byte(result[1])
+func (s *Storage) writeFile(data Data) error {
+	bytes, err := json.Marshal(data)
 
-		data[k] = v
+	if err != nil {
+		return err
 	}
 
-	return data, nil
+	err = os.WriteFile(FileLocation, bytes, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *Storage) createFile() {
@@ -94,18 +84,4 @@ func (s *Storage) createFile() {
 	}
 
 	defer file.Close()
-}
-
-func (s *Storage) storeAllData(data Data) {
-	file, err := os.Create(FileLocation)
-
-	defer file.Close()
-
-	if err != nil {
-		return
-	}
-
-	encoder := json.NewEncoder(file)
-	encoder.SetIndent("", "  ")
-	encoder.Encode(data)
 }

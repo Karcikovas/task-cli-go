@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 	"task-cli-go/internal/storage"
 	"time"
 )
@@ -37,11 +38,12 @@ func (t *Task) CreateTask(task TaskDTO) {
 
 	data, err := json.Marshal(newTask)
 
+	log.Println(task.Id)
 	if err != nil {
 		panic(ErrUnableToCreateNewTask)
 	}
 
-	t.storage.Save(data, fmt.Sprintf(`task-%s-data`, task.Id))
+	t.storage.Save(data, fmt.Sprintf(`task-%s-data`, strconv.Itoa(task.Id)))
 }
 
 func (t *Task) DeleteTask(taskID string) {
@@ -62,10 +64,10 @@ func (t *Task) GetAllTasks() []TaskDTO {
 		log.Println("negerai")
 	}
 
-	for _, value := range data {
+	for _, value := range data.Records {
 		var task TaskDTO
 
-		err = json.Unmarshal(value, &task)
+		err = json.Unmarshal([]byte(value), &task)
 
 		if err != nil {
 			log.Println(err)
