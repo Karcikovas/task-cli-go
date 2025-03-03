@@ -15,14 +15,20 @@ type Data struct {
 	Records []string `json:"records"`
 }
 
+type Repository interface {
+	GetAll() (Data, error)
+	InsertOrUpdate(v []byte)
+	Delete(id int)
+}
+
 type Storage struct {
 }
 
-func CreateNewStorage() *Storage {
+func CreateNewStorage() Repository {
 	return &Storage{}
 }
 
-func (s *Storage) Save(v []byte, k string) {
+func (s *Storage) InsertOrUpdate(v []byte) {
 	data, _ := s.readFile()
 
 	if data.Total == 0 {
@@ -35,11 +41,11 @@ func (s *Storage) Save(v []byte, k string) {
 	s.writeFile(data)
 }
 
-func (s *Storage) Delete(k string) {
+func (s *Storage) Delete(id int) {
 
 }
 
-func (s *Storage) GetAllStorageData() (Data, error) {
+func (s *Storage) GetAll() (Data, error) {
 	return s.readFile()
 }
 
