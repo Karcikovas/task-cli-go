@@ -14,7 +14,7 @@ func NewDelete(task *task.Task) *Delete {
 }
 
 func (c *Delete) Run(args string) {
-	c.task.DeleteTask(args)
+	c.task.DeleteTask(0)
 }
 
 func (c *Delete) GetCmd() *console.Console {

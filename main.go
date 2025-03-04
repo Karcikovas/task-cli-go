@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strings"
 	"task-cli-go/cmd"
@@ -22,7 +21,6 @@ func main() {
 
 	for {
 		r.AvailableCommands()
-		fmt.Print("Enter your choice: ")
 
 		scanner.Scan()
 		input := scanner.Text()

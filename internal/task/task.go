@@ -24,24 +24,35 @@ func CreateNewTask(storage storage.Repository) *Task {
 }
 
 func (t *Task) CreateTask(task TaskDTO) {
+	data, err := t.storage.GetAll()
+
+	if err != nil {
+		panic(ErrUnableToCreateNewTask)
+	}
+
 	now := time.Now().String()
+	id := data.Total + 1
 
 	newTask := TaskDTO{
-		Id:          task.Id,
+		Id:          &id,
 		Description: task.Description,
 		Status:      TODO,
 		CreatedAt:   &now,
 		UpdatedAt:   &now,
 	}
 
-	data, err := json.Marshal(newTask)
+	byteData, err := json.Marshal(newTask)
 
 	log.Println(task.Id)
 	if err != nil {
 		panic(ErrUnableToCreateNewTask)
 	}
 
-	t.storage.InsertOrUpdate(data)
+	_, err = t.storage.InsertOrUpdate(byteData)
+
+	if err != nil {
+		panic(ErrUnableToCreateNewTask)
+	}
 }
 
 func (t *Task) DeleteTask(taskID int) {
