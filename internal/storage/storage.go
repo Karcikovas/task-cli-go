@@ -20,7 +20,7 @@ type Data struct {
 }
 
 type Repository interface {
-	GetOneBy(id int) (string, error)
+	GetOneBy(id string) (*string, error)
 	GetAll() (Data, error)
 	InsertOrUpdate(v []byte) (*string, error)
 	Delete(id string) (bool, error)
@@ -33,9 +33,21 @@ func CreateNewStorage() Repository {
 	return &Storage{}
 }
 
-func (s *Storage) GetOneBy(id int) (string, error) {
+func (s *Storage) GetOneBy(id string) (*string, error) {
+	data, err := s.readFile()
 
-	return "asdas", nil
+	if err != nil {
+		log.Println(red + err.Error())
+		return nil, ErrUnableToGetByID
+	}
+
+	if data.Total > 0 {
+		item := data.Records[id]
+
+		return &item, nil
+	}
+
+	return nil, ErrUnableToGetByID
 }
 
 func (s *Storage) InsertOrUpdate(v []byte) (*string, error) {
