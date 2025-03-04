@@ -24,14 +24,14 @@ func CreateNewTask(storage storage.Repository) *Task {
 }
 
 func (t *Task) CreateTask(task TaskDTO) {
-	data, err := t.storage.GetAll()
+	//data, err := t.storage.GetAll()
 
-	if err != nil {
-		panic(ErrUnableToCreateNewTask)
-	}
+	//if err != nil {
+	//	panic(ErrUnableToGetStorageData)
+	//}
 
 	now := time.Now().String()
-	id := data.Total + 1
+	id := 0 + 1
 
 	newTask := TaskDTO{
 		Id:          &id,
@@ -55,10 +55,12 @@ func (t *Task) CreateTask(task TaskDTO) {
 	}
 }
 
-func (t *Task) DeleteTask(taskID int) {
-	t.storage.Delete(taskID)
+func (t *Task) DeleteTask(taskID string) {
+	deleted, err := t.storage.Delete(taskID)
 
-	log.Println("Task has been deleted")
+	if err != nil || !deleted {
+		panic(ErrUnableToDeleteTask)
+	}
 }
 
 func (t *Task) UpdateTask() {

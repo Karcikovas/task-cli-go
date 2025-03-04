@@ -1,6 +1,7 @@
 package task
 
 import (
+	"log"
 	"task-cli-go/internal/console"
 	"task-cli-go/internal/task"
 )
@@ -14,7 +15,9 @@ func NewDelete(task *task.Task) *Delete {
 }
 
 func (c *Delete) Run(args string) {
-	c.task.DeleteTask(0)
+	c.task.DeleteTask("0")
+
+	log.Println(`Task Deleted`)
 }
 
 func (c *Delete) GetCmd() *console.Console {
