@@ -13,6 +13,13 @@ var (
 	InPROGRESS = "in-progress"
 )
 
+type Service interface {
+	CreateTask(task TaskDTO) (bool, *TaskDTO)
+	DeleteTask(taskID string)
+	UpdateTask()
+	GetAllTasks() []TaskDTO
+}
+
 type Task struct {
 	storage storage.Repository
 }
@@ -23,7 +30,7 @@ func CreateNewTask(storage storage.Repository) *Task {
 	}
 }
 
-func (t *Task) CreateTask(task TaskDTO) {
+func (t *Task) CreateTask(task TaskDTO) (bool, *TaskDTO) {
 	//data, err := t.storage.GetAll()
 
 	//if err != nil {
@@ -43,16 +50,30 @@ func (t *Task) CreateTask(task TaskDTO) {
 
 	byteData, err := json.Marshal(newTask)
 
-	log.Println(task.Id)
 	if err != nil {
-		panic(ErrUnableToCreateNewTask)
+		log.Println(ErrUnableToCreateNewTask)
+
+		return false, nil
 	}
 
-	_, err = t.storage.InsertOrUpdate(byteData)
+	savedTaskString, err := t.storage.InsertOrUpdate(byteData)
+
+	if err != nil || savedTaskString == nil {
+		log.Println(ErrUnableToCreateNewTask)
+
+		return false, nil
+	}
+	var savedTask TaskDTO
+
+	err = json.Unmarshal([]byte(*savedTaskString), &savedTask)
 
 	if err != nil {
-		panic(ErrUnableToCreateNewTask)
+		log.Println(ErrUnableToCreateNewTask)
+
+		return false, nil
 	}
+
+	return true, &savedTask
 }
 
 func (t *Task) DeleteTask(taskID string) {

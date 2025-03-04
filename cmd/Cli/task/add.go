@@ -1,6 +1,9 @@
 package task
 
 import (
+	"fmt"
+	"log"
+	"strconv"
 	"task-cli-go/internal/console"
 	"task-cli-go/internal/task"
 )
@@ -16,13 +19,20 @@ func NewAdd(task *task.Task) *Add {
 }
 
 func (c *Add) Run(args string) {
-	c.task.CreateTask(task.TaskDTO{
+	saved, t := c.task.CreateTask(task.TaskDTO{
 		Id:          nil,
 		Description: args,
 		Status:      "In Progress",
 		CreatedAt:   nil,
 		UpdatedAt:   nil,
 	})
+
+	if saved {
+		log.Println(fmt.Sprintf(`Task ID: %s`, strconv.Itoa(*t.Id)))
+	} else {
+		log.Println("FAILED to Add task")
+	}
+
 }
 
 func (c *Add) GetCmd() *console.Console {

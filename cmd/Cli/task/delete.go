@@ -15,7 +15,7 @@ func NewDelete(task *task.Task) *Delete {
 }
 
 func (c *Delete) Run(args string) {
-	c.task.DeleteTask("0")
+	c.task.DeleteTask(args)
 
 	log.Println(`Task Deleted`)
 }
