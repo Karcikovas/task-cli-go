@@ -22,5 +22,5 @@ Functional requirements:
 2. Add Tests for Task Service unit test
 3. Add Integration test for Commands
 4. Update Dependency wire and move all dependencies out of main file
-4. golint.yaml with proper go linter rules
-5. Update README.md
+5. golint.yaml with proper go linter rules 
+6. Update README.md
