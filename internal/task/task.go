@@ -15,7 +15,7 @@ var (
 
 type Service interface {
 	CreateTask(task TaskDTO) (bool, *TaskDTO)
-	DeleteTask(taskID string)
+	DeleteTask(taskID string) bool
 	UpdateTask()
 	GetAllTasks() []TaskDTO
 }
@@ -31,14 +31,16 @@ func CreateNewTask(storage storage.Repository) *Task {
 }
 
 func (t *Task) CreateTask(task TaskDTO) (bool, *TaskDTO) {
-	//data, err := t.storage.GetAll()
+	data, err := t.storage.GetAll()
 
-	//if err != nil {
-	//	panic(ErrUnableToGetStorageData)
-	//}
+	if err != nil {
+		log.Println(ErrUnableToGetStorageData)
+
+		return false, nil
+	}
 
 	now := time.Now().String()
-	id := 0 + 1
+	id := data.Total + 1
 
 	newTask := TaskDTO{
 		Id:          &id,
@@ -76,17 +78,19 @@ func (t *Task) CreateTask(task TaskDTO) (bool, *TaskDTO) {
 	return true, &savedTask
 }
 
-func (t *Task) DeleteTask(taskID string) {
+func (t *Task) DeleteTask(taskID string) bool {
 	deleted, err := t.storage.Delete(taskID)
 
 	if err != nil || !deleted {
-		panic(ErrUnableToDeleteTask)
+		log.Println(ErrUnableToDeleteTask)
+
+		return false
 	}
+
+	return true
 }
 
-func (t *Task) UpdateTask() {
-
-}
+func (t *Task) UpdateTask() {}
 
 func (t *Task) GetAllTasks() []TaskDTO {
 	var list []TaskDTO

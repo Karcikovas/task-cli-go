@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 )
 
 var Location = "internal/storage"
@@ -67,14 +68,13 @@ func (s *Storage) InsertOrUpdate(v []byte) (*string, error) {
 		}
 	}
 
-	data.Total += 1
-
-	id := string(data.Total)
-	data.Records[id] = string(v)
+	id := data.Total + 1
+	data.Total = data.Total + 1
+	data.Records[strconv.Itoa(id)] = string(v)
 
 	update, err := s.writeFile(data)
 
-	if !update && err != nil {
+	if !update || err != nil {
 		log.Println(red + err.Error())
 		return nil, ErrUnableToInsertOrUpdate
 	}
@@ -93,6 +93,14 @@ func (s *Storage) Delete(id string) (bool, error) {
 	}
 
 	delete(data.Records, id)
+	data.Total -= 1
+
+	update, err := s.writeFile(data)
+
+	if !update || err != nil {
+		log.Println(red + err.Error())
+		return false, ErrUnableToDelete
+	}
 
 	return true, nil
 }
