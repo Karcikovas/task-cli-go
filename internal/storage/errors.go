@@ -3,8 +3,7 @@ package storage
 import "errors"
 
 var ErrUnableToCreateNewStorageFile = errors.New("unable to create new storage file")
-var ErrUnableToGetAllStorageItems = errors.New("unable to get all storage items")
-var ErrUnableToDecodeFile = errors.New("unable to decode file")
-var ErrUnableToUnmarshalJson = errors.New("unable to unmarshal json")
-var ErrUnableToReadFile = errors.New("unable to read file")
-var ErrUnableToSaveInStorage = errors.New("unable to save in storage")
+var ErrUnableToInsertOrUpdate = errors.New("unable to insert or update")
+var ErrUnableToUnmarshalStorage = errors.New("unable to unmarshal storage")
+var ErrUnableToMarshalStorage = errors.New("unable to marshal storage")
+var ErrUnableWriteToFile = errors.New("unable write to file")

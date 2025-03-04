@@ -10,6 +10,7 @@ import (
 var Location = "internal/storage"
 var Format = "json"
 var FileLocation = fmt.Sprintf(`%s/storage.%s`, Location, Format)
+var red = "\033[31m"
 
 type RecordMap = map[string]string
 
@@ -21,7 +22,7 @@ type Data struct {
 type Repository interface {
 	GetOneBy(id int) (string, error)
 	GetAll() (Data, error)
-	InsertOrUpdate(v []byte) (string, error)
+	InsertOrUpdate(v []byte) (*string, error)
 	Delete(id string) (bool, error)
 }
 
@@ -37,13 +38,21 @@ func (s *Storage) GetOneBy(id int) (string, error) {
 	return "asdas", nil
 }
 
-func (s *Storage) InsertOrUpdate(v []byte) (string, error) {
+func (s *Storage) InsertOrUpdate(v []byte) (*string, error) {
 	data, err := s.readFile()
 
-	log.Println("ERRORRR ", err.Error(), "data ", data)
+	if err != nil {
+		log.Println(red + err.Error())
+		return nil, ErrUnableToInsertOrUpdate
+	}
 
 	if data.Total == 0 {
-		s.createFile()
+		created, err := s.createFile()
+
+		if !created && err != nil {
+			log.Println(red + err.Error())
+			return nil, ErrUnableToInsertOrUpdate
+		}
 	}
 
 	data.Total += 1
@@ -51,15 +60,23 @@ func (s *Storage) InsertOrUpdate(v []byte) (string, error) {
 	id := string(data.Total)
 	data.Records[id] = string(v)
 
-	s.writeFile(data)
+	update, err := s.writeFile(data)
 
-	return string(v), nil
+	if !update && err != nil {
+		log.Println(red + err.Error())
+		return nil, ErrUnableToInsertOrUpdate
+	}
+
+	value := string(v)
+
+	return &value, nil
 }
 
 func (s *Storage) Delete(id string) (bool, error) {
 	data, err := s.readFile()
 
 	if err != nil {
+		log.Println(red + err.Error())
 		return false, nil
 	}
 
@@ -79,38 +96,44 @@ func (s *Storage) readFile() (Data, error) {
 		return Data{
 			Total:   0,
 			Records: make(RecordMap),
-		}, err
+		}, nil
 	}
 
 	storage := Data{}
 
 	err = json.Unmarshal(content, &storage)
 	if err != nil {
-		return storage, err
+		log.Println(red + err.Error())
+		return storage, ErrUnableToUnmarshalStorage
 	}
 	return storage, nil
 }
 
-func (s *Storage) writeFile(data Data) error {
+func (s *Storage) writeFile(data Data) (bool, error) {
 	bytes, err := json.Marshal(data)
 
 	if err != nil {
-		return err
+		log.Println(red + err.Error())
+		return false, ErrUnableToMarshalStorage
 	}
 
 	err = os.WriteFile(FileLocation, bytes, 0644)
 	if err != nil {
-		return err
+		log.Println(red + err.Error())
+		return false, ErrUnableWriteToFile
 	}
-	return nil
+	return true, nil
 }
 
-func (s *Storage) createFile() {
+func (s *Storage) createFile() (bool, error) {
 	file, err := os.Create(FileLocation)
 
 	if err != nil {
-		panic(ErrUnableToCreateNewStorageFile)
+		log.Println(red + err.Error())
+		return false, ErrUnableToCreateNewStorageFile
 	}
 
 	defer file.Close()
+
+	return true, nil
 }

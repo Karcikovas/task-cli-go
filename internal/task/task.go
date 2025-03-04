@@ -78,7 +78,7 @@ func (t *Task) GetAllTasks() []TaskDTO {
 	for _, value := range data.Records {
 		var task TaskDTO
 
-		err = json.Unmarshal([]byte(value), &task)
+		err := json.Unmarshal([]byte(value), &task)
 
 		if err != nil {
 			log.Println(err)
