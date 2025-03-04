@@ -3,25 +3,26 @@ package task
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"task-cli-go/internal/console"
 	"task-cli-go/internal/task"
 )
 
 type List struct {
-	task *task.Task
+	service task.Service
 }
 
-func NewList(task *task.Task) *List {
+func NewList(service task.Service) *List {
 	return &List{
-		task: task,
+		service: service,
 	}
 }
 
 func (c *List) Run(_ string) {
-	tasks := c.task.GetAllTasks()
+	tasks := c.service.GetAllTasks()
 
 	for _, t := range tasks {
-		log.Println(fmt.Sprintf(`ID: %s Description: %s Updated: %s`, 0, t.Description, t.UpdatedAt))
+		log.Println(fmt.Sprintf(`ID: %s Description: %s Updated: %s`, strconv.Itoa(*t.Id), t.Description, t.UpdatedAt))
 	}
 }
 

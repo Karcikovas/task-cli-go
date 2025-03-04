@@ -9,17 +9,17 @@ import (
 )
 
 type Add struct {
-	task *task.Task
+	service task.Service
 }
 
-func NewAdd(task *task.Task) *Add {
+func NewAdd(service task.Service) *Add {
 	return &Add{
-		task: task,
+		service: service,
 	}
 }
 
 func (c *Add) Run(args string) {
-	saved, t := c.task.CreateTask(task.TaskDTO{
+	saved, t := c.service.CreateTask(task.TaskDTO{
 		Id:          nil,
 		Description: args,
 		Status:      "In Progress",

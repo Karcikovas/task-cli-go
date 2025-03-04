@@ -24,7 +24,7 @@ type Task struct {
 	storage storage.Repository
 }
 
-func CreateNewTask(storage storage.Repository) *Task {
+func CreateNewTask(storage storage.Repository) Service {
 	return &Task{
 		storage: storage,
 	}
@@ -90,14 +90,14 @@ func (t *Task) DeleteTask(taskID string) bool {
 	return true
 }
 
-func (t *Task) UpdateTask() {}
-
 func (t *Task) GetAllTasks() []TaskDTO {
 	var list []TaskDTO
 	data, err := t.storage.GetAll()
 
 	if err != nil {
-		log.Println("negerai")
+		log.Println(ErrUnableToGetAllTask)
+
+		return list
 	}
 
 	for _, value := range data.Records {
@@ -106,7 +106,9 @@ func (t *Task) GetAllTasks() []TaskDTO {
 		err := json.Unmarshal([]byte(value), &task)
 
 		if err != nil {
-			log.Println(err)
+			log.Println(ErrUnableToGetAllTask)
+
+			return []TaskDTO{}
 		}
 
 		list = append(list, task)
@@ -115,4 +117,4 @@ func (t *Task) GetAllTasks() []TaskDTO {
 	return list
 }
 
-func (t *Task) GetTaskByStatus(status string) {}
+func (t *Task) UpdateTask() {}

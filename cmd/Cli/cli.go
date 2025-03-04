@@ -10,7 +10,7 @@ type Cli struct {
 	commands map[string]console.Command
 }
 
-func NewCLi(task *task.Task) *Cli {
+func NewCLi(task task.Service) *Cli {
 	return &Cli{
 		commands: map[string]console.Command{
 			"add":    taskCli.NewAdd(task),

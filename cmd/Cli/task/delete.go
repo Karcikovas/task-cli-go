@@ -8,15 +8,15 @@ import (
 )
 
 type Delete struct {
-	task *task.Task
+	service task.Service
 }
 
-func NewDelete(task *task.Task) *Delete {
-	return &Delete{task: task}
+func NewDelete(service task.Service) *Delete {
+	return &Delete{service: service}
 }
 
 func (c *Delete) Run(args string) {
-	deleted := c.task.DeleteTask(args)
+	deleted := c.service.DeleteTask(args)
 
 	if deleted {
 		log.Println(fmt.Sprintf(`Task %s deleted`, args))
