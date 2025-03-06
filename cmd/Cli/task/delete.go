@@ -4,15 +4,20 @@ import (
 	"fmt"
 	"log"
 	"task-cli-go/internal/console"
+	"task-cli-go/internal/logger"
 	"task-cli-go/internal/task"
 )
 
 type Delete struct {
 	service task.Service
+	logger  logger.Service
 }
 
-func NewDelete(service task.Service) *Delete {
-	return &Delete{service: service}
+func NewDelete(service task.Service, logger logger.Service) *Delete {
+	return &Delete{
+		service: service,
+		logger:  logger,
+	}
 }
 
 func (c *Delete) Run(args string) {

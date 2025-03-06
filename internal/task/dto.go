@@ -7,3 +7,10 @@ type TaskDTO struct {
 	CreatedAt   *string `json:"createdAt"`
 	UpdatedAt   *string `json:"updatedAt"`
 }
+
+type UpdateTaskDTO struct {
+	ID          int
+	Description *string
+	Status      *string
+	UpdatedAt   *string
+}

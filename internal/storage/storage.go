@@ -3,15 +3,14 @@ package storage
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
+	"task-cli-go/internal/logger"
 )
 
 var Location = "internal/storage"
 var Format = "json"
 var FileLocation = fmt.Sprintf(`%s/storage.%s`, Location, Format)
-var red = "\033[31m"
 
 type RecordMap = map[string]string
 
@@ -28,17 +27,20 @@ type Repository interface {
 }
 
 type Storage struct {
+	logger logger.Service
 }
 
-func CreateNewStorage() Repository {
-	return &Storage{}
+func CreateNewStorage(logger logger.Service) Repository {
+	return &Storage{
+		logger: logger,
+	}
 }
 
 func (s *Storage) GetOneBy(id string) (*string, error) {
 	data, err := s.readFile()
 
 	if err != nil {
-		log.Println(red + err.Error())
+		s.logger.LogError(err.Error())
 		return nil, ErrUnableToGetByID
 	}
 
@@ -55,7 +57,7 @@ func (s *Storage) InsertOrUpdate(v []byte) (*string, error) {
 	data, err := s.readFile()
 
 	if err != nil {
-		log.Println(red + err.Error())
+		s.logger.LogError(err.Error())
 		return nil, ErrUnableToInsertOrUpdate
 	}
 
@@ -63,7 +65,7 @@ func (s *Storage) InsertOrUpdate(v []byte) (*string, error) {
 		created, err := s.createFile()
 
 		if !created && err != nil {
-			log.Println(red + err.Error())
+			s.logger.LogError(err.Error())
 			return nil, ErrUnableToInsertOrUpdate
 		}
 	}
@@ -75,7 +77,7 @@ func (s *Storage) InsertOrUpdate(v []byte) (*string, error) {
 	update, err := s.writeFile(data)
 
 	if !update || err != nil {
-		log.Println(red + err.Error())
+		s.logger.LogError(err.Error())
 		return nil, ErrUnableToInsertOrUpdate
 	}
 
@@ -88,7 +90,7 @@ func (s *Storage) Delete(id string) (bool, error) {
 	data, err := s.readFile()
 
 	if err != nil {
-		log.Println(red + err.Error())
+		s.logger.LogError(err.Error())
 		return false, nil
 	}
 
@@ -98,7 +100,7 @@ func (s *Storage) Delete(id string) (bool, error) {
 	update, err := s.writeFile(data)
 
 	if !update || err != nil {
-		log.Println(red + err.Error())
+		s.logger.LogError(err.Error())
 		return false, ErrUnableToDelete
 	}
 
@@ -123,7 +125,7 @@ func (s *Storage) readFile() (Data, error) {
 
 	err = json.Unmarshal(content, &storage)
 	if err != nil {
-		log.Println(red + err.Error())
+		s.logger.LogError(err.Error())
 		return storage, ErrUnableToUnmarshalStorage
 	}
 	return storage, nil
@@ -133,13 +135,13 @@ func (s *Storage) writeFile(data Data) (bool, error) {
 	bytes, err := json.Marshal(data)
 
 	if err != nil {
-		log.Println(red + err.Error())
+		s.logger.LogError(err.Error())
 		return false, ErrUnableToMarshalStorage
 	}
 
 	err = os.WriteFile(FileLocation, bytes, 0644)
 	if err != nil {
-		log.Println(red + err.Error())
+		s.logger.LogError(err.Error())
 		return false, ErrUnableWriteToFile
 	}
 	return true, nil
@@ -149,7 +151,7 @@ func (s *Storage) createFile() (bool, error) {
 	file, err := os.Create(FileLocation)
 
 	if err != nil {
-		log.Println(red + err.Error())
+		s.logger.LogError(err.Error())
 		return false, ErrUnableToCreateNewStorageFile
 	}
 

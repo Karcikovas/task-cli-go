@@ -3,6 +3,7 @@ package task
 import (
 	"encoding/json"
 	"log"
+	"task-cli-go/internal/logger"
 	"task-cli-go/internal/storage"
 	"time"
 )
@@ -16,17 +17,19 @@ var (
 type Service interface {
 	CreateTask(task TaskDTO) (bool, *TaskDTO)
 	DeleteTask(taskID string) bool
-	UpdateTask()
+	UpdateTask(task UpdateTaskDTO) bool
 	GetAllTasks() []TaskDTO
 }
 
 type Task struct {
 	storage storage.Repository
+	logger  logger.Service
 }
 
-func CreateNewTask(storage storage.Repository) Service {
+func CreateNewTask(storage storage.Repository, logger logger.Service) Service {
 	return &Task{
 		storage: storage,
+		logger:  logger,
 	}
 }
 
@@ -34,7 +37,7 @@ func (t *Task) CreateTask(task TaskDTO) (bool, *TaskDTO) {
 	data, err := t.storage.GetAll()
 
 	if err != nil {
-		log.Println(ErrUnableToGetStorageData)
+		t.logger.LogError(ErrUnableToGetStorageData.Error())
 
 		return false, nil
 	}
@@ -53,7 +56,7 @@ func (t *Task) CreateTask(task TaskDTO) (bool, *TaskDTO) {
 	byteData, err := json.Marshal(newTask)
 
 	if err != nil {
-		log.Println(ErrUnableToCreateNewTask)
+		t.logger.LogError(ErrUnableToCreateNewTask.Error())
 
 		return false, nil
 	}
@@ -61,7 +64,7 @@ func (t *Task) CreateTask(task TaskDTO) (bool, *TaskDTO) {
 	savedTaskString, err := t.storage.InsertOrUpdate(byteData)
 
 	if err != nil || savedTaskString == nil {
-		log.Println(ErrUnableToCreateNewTask)
+		t.logger.LogError(ErrUnableToCreateNewTask.Error())
 
 		return false, nil
 	}
@@ -70,7 +73,7 @@ func (t *Task) CreateTask(task TaskDTO) (bool, *TaskDTO) {
 	err = json.Unmarshal([]byte(*savedTaskString), &savedTask)
 
 	if err != nil {
-		log.Println(ErrUnableToCreateNewTask)
+		t.logger.LogError(ErrUnableToCreateNewTask.Error())
 
 		return false, nil
 	}
@@ -82,7 +85,7 @@ func (t *Task) DeleteTask(taskID string) bool {
 	deleted, err := t.storage.Delete(taskID)
 
 	if err != nil || !deleted {
-		log.Println(ErrUnableToDeleteTask)
+		t.logger.LogError(ErrUnableToDeleteTask.Error())
 
 		return false
 	}
@@ -95,7 +98,7 @@ func (t *Task) GetAllTasks() []TaskDTO {
 	data, err := t.storage.GetAll()
 
 	if err != nil {
-		log.Println(ErrUnableToGetAllTask)
+		t.logger.LogError(ErrUnableToGetAllTask.Error())
 
 		return list
 	}
@@ -106,7 +109,7 @@ func (t *Task) GetAllTasks() []TaskDTO {
 		err := json.Unmarshal([]byte(value), &task)
 
 		if err != nil {
-			log.Println(ErrUnableToGetAllTask)
+			t.logger.LogError(ErrUnableToGetAllTask.Error())
 
 			return []TaskDTO{}
 		}
@@ -117,4 +120,8 @@ func (t *Task) GetAllTasks() []TaskDTO {
 	return list
 }
 
-func (t *Task) UpdateTask() {}
+func (t *Task) UpdateTask(task UpdateTaskDTO) bool {
+	log.Println(task)
+
+	return true
+}

@@ -1,19 +1,52 @@
 package task
 
 import (
-	"log"
+	"fmt"
+	"regexp"
+	"strconv"
 	"task-cli-go/internal/console"
+	"task-cli-go/internal/logger"
+	"task-cli-go/internal/task"
 )
 
 type Update struct {
+	task   task.Service
+	logger logger.Service
 }
 
-func NewUpdate() *Update {
-	return &Update{}
+func NewUpdate(task task.Service, logger logger.Service) *Update {
+	return &Update{
+		task:   task,
+		logger: logger,
+	}
 }
 
-func (c *Update) Run(args string) {
-	log.Println("Cli Update command doing stuff ", args)
+func (c *Update) Run(arg string) {
+	idRegex := regexp.MustCompile(`\b\d+\b`)
+	taskID := idRegex.FindString(arg)
+	descriptionRegex := regexp.MustCompile(`"([^"]+)"`)
+	description := descriptionRegex.FindString(arg)
+
+	if len(taskID) == 0 || len(description) == 0 {
+		c.logger.LogError("Wrong argument passed")
+	}
+
+	id, err := strconv.Atoi(taskID)
+
+	if err != nil {
+		c.logger.LogError(err.Error())
+	}
+
+	updated := c.task.UpdateTask(task.UpdateTaskDTO{
+		ID:          id,
+		Description: &description,
+	})
+
+	if updated {
+		c.logger.LogInfo(fmt.Sprintf(`Task %s updated`, taskID))
+	} else {
+		c.logger.LogError(fmt.Sprintf(`Failed to update %s`, taskID))
+	}
 
 }
 

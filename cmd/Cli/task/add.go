@@ -5,16 +5,19 @@ import (
 	"log"
 	"strconv"
 	"task-cli-go/internal/console"
+	"task-cli-go/internal/logger"
 	"task-cli-go/internal/task"
 )
 
 type Add struct {
 	service task.Service
+	logger  logger.Service
 }
 
-func NewAdd(service task.Service) *Add {
+func NewAdd(service task.Service, logger logger.Service) *Add {
 	return &Add{
 		service: service,
+		logger:  logger,
 	}
 }
 

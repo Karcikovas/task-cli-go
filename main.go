@@ -6,15 +6,18 @@ import (
 	"strings"
 	"task-cli-go/cmd"
 	"task-cli-go/cmd/Cli"
+	"task-cli-go/internal/logger"
 	"task-cli-go/internal/storage"
 	"task-cli-go/internal/task"
 )
 
 func main() {
 	//TODO: move this like wire function for building dependencies
-	s := storage.CreateNewStorage()
-	t := task.CreateNewTask(s)
-	cli := Cli.NewCLi(t)
+	l := logger.NewLogger()
+
+	s := storage.CreateNewStorage(l)
+	t := task.CreateNewTask(s, l)
+	cli := Cli.NewCLi(t, l)
 	r := cmd.NewRoot(cli.GetCommands())
 
 	scanner := bufio.NewScanner(os.Stdin)
