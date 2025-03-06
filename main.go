@@ -39,7 +39,6 @@ func main() {
 
 		c := parts[0]
 		args := strings.Join(parts[1:], " ")
-
 		command := cli.FindCommand(c)
 
 		if command != nil {

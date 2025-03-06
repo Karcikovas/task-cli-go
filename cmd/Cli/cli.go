@@ -30,7 +30,6 @@ func (c *Cli) SetAvailableCommands(commands ...console.Command) {
 }
 
 func (c *Cli) AvailableCommands() {
-
 	for _, command := range c.commands {
 		c := command.GetCmd()
 
