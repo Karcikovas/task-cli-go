@@ -2,7 +2,7 @@ package task
 
 import (
 	"fmt"
-	"log"
+	"regexp"
 	"task-cli-go/internal/console"
 	"task-cli-go/internal/logger"
 	"task-cli-go/internal/task"
@@ -21,12 +21,19 @@ func NewDelete(service task.Service, logger logger.Service) *Delete {
 }
 
 func (c *Delete) Run(args string) {
+	idRegex := regexp.MustCompile(`\b\d+\b`)
+	taskID := idRegex.FindString(args)
+
+	if len(taskID) == 0 {
+		c.logger.LogError("Wrong argument passed")
+	}
+
 	deleted := c.service.DeleteTask(args)
 
 	if deleted {
-		log.Println(fmt.Sprintf(`Task %s deleted`, args))
+		c.logger.LogSuccess(fmt.Sprintf(`Task %s deleted`, args))
 	} else {
-		log.Println("Unable to Delete Task")
+		c.logger.LogWarning("Unable to Delete Task")
 	}
 }
 

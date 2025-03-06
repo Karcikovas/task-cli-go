@@ -46,6 +46,7 @@ func main() {
 		case "list":
 			cli.CompleteCommand("list").Run(args)
 		default:
+			l.LogError("Command not found")
 			r.AvailableCommands()
 		}
 	}

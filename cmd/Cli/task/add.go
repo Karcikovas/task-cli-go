@@ -27,6 +27,8 @@ func (c *Add) Run(args string) {
 
 	if len(description) == 0 {
 		c.logger.LogError("Wrong argument passed")
+
+		return
 	}
 
 	saved, t := c.service.CreateTask(task.TaskDTO{
