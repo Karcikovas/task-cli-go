@@ -9,14 +9,14 @@ import (
 )
 
 type Delete struct {
-	service task.Service
-	logger  logger.Service
+	task   task.Service
+	logger logger.Service
 }
 
-func NewDelete(service task.Service, logger logger.Service) *Delete {
+func NewDelete(task task.Service, logger logger.Service) *Delete {
 	return &Delete{
-		service: service,
-		logger:  logger,
+		task:   task,
+		logger: logger,
 	}
 }
 
@@ -28,7 +28,7 @@ func (c *Delete) Run(args string) {
 		c.logger.LogError("Wrong argument passed")
 	}
 
-	deleted := c.service.DeleteTask(args)
+	deleted := c.task.DeleteTask(args)
 
 	if deleted {
 		c.logger.LogSuccess(fmt.Sprintf(`Task %s deleted`, args))
@@ -38,7 +38,6 @@ func (c *Delete) Run(args string) {
 }
 
 func (c *Delete) GetCmd() *console.Console {
-
 	command := console.NewConsoleCommand("delete", "remove item from todo list by passing item id", c.Run)
 
 	return command

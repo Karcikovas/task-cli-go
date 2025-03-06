@@ -144,10 +144,14 @@ func (t *Task) UpdateTask(updateDto UpdateTaskDTO) bool {
 
 	updateTask := TaskDTO{
 		Id:          task.Id,
-		Description: *updateDto.Description,
+		Description: task.Description,
 		Status:      task.Status,
 		UpdatedAt:   &timeNow,
 		CreatedAt:   task.CreatedAt,
+	}
+
+	if updateDto.Description != nil {
+		updateTask.Description = *updateDto.Description
 	}
 
 	if updateDto.Status != nil {

@@ -45,6 +45,10 @@ func main() {
 			cli.CompleteCommand("delete").Run(args)
 		case "list":
 			cli.CompleteCommand("list").Run(args)
+		case "mark-done":
+			cli.CompleteCommand("mark-done").Run(args)
+		case "in-progress":
+			cli.CompleteCommand("in-progress").Run(args)
 		default:
 			l.LogError("Command not found")
 			r.AvailableCommands()

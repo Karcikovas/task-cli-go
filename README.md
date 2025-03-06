@@ -13,8 +13,7 @@ Working on project from roadmap.sh
 
 
 Missing feature list:
-1. Add Mark task as in progress or done command
-2. List by status (done, not done, in progress)
+1. List by status (done, not done, in progress)
 
 Functional requirements:
 1. Add Tests for storage service unit test

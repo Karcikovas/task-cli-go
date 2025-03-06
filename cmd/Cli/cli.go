@@ -17,10 +17,12 @@ func NewCLi(
 ) *Cli {
 	return &Cli{
 		commands: map[string]console.Command{
-			"add":    taskCli.NewAdd(task, logger),
-			"update": taskCli.NewUpdate(task, logger),
-			"delete": taskCli.NewDelete(task, logger),
-			"list":   taskCli.NewList(task, logger),
+			"add":         taskCli.NewAdd(task, logger),
+			"update":      taskCli.NewUpdate(task, logger),
+			"delete":      taskCli.NewDelete(task, logger),
+			"list":        taskCli.NewList(task, logger),
+			"mark-done":   taskCli.NewDone(task, logger),
+			"in-progress": taskCli.NewProgress(task, logger),
 		},
 	}
 }
