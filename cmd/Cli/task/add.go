@@ -2,7 +2,7 @@ package task
 
 import (
 	"fmt"
-	"log"
+	"regexp"
 	"strconv"
 	"task-cli-go/internal/console"
 	"task-cli-go/internal/logger"
@@ -22,6 +22,13 @@ func NewAdd(service task.Service, logger logger.Service) *Add {
 }
 
 func (c *Add) Run(args string) {
+	descriptionRegex := regexp.MustCompile(`"([^"]+)"`)
+	description := descriptionRegex.FindString(args)
+
+	if len(description) == 0 {
+		c.logger.LogError("Wrong argument passed")
+	}
+
 	saved, t := c.service.CreateTask(task.TaskDTO{
 		Id:          nil,
 		Description: args,
@@ -31,11 +38,10 @@ func (c *Add) Run(args string) {
 	})
 
 	if saved {
-		log.Println(fmt.Sprintf(`Task ID: %s`, strconv.Itoa(*t.Id)))
+		c.logger.LogSuccess(fmt.Sprintf(`Task ID: %s`, strconv.Itoa(*t.Id)))
 	} else {
-		log.Println("FAILED to Add task")
+		c.logger.LogWarning("FAILED to Add task")
 	}
-
 }
 
 func (c *Add) GetCmd() *console.Console {

@@ -2,7 +2,6 @@ package task
 
 import (
 	"encoding/json"
-	"log"
 	"strconv"
 	"task-cli-go/internal/logger"
 	"task-cli-go/internal/storage"
@@ -151,6 +150,10 @@ func (t *Task) UpdateTask(updateDto UpdateTaskDTO) bool {
 		CreatedAt:   task.CreatedAt,
 	}
 
+	if updateDto.Status != nil {
+		updateTask.Status = *updateDto.Status
+	}
+
 	byteData, err := json.Marshal(updateTask)
 
 	if err != nil {
@@ -159,9 +162,7 @@ func (t *Task) UpdateTask(updateDto UpdateTaskDTO) bool {
 		return false
 	}
 
-	data, err := t.storage.Upsert(taskID, byteData)
-
-	log.Println(data)
+	_, err = t.storage.Upsert(taskID, byteData)
 
 	return true
 }

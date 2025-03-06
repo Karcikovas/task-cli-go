@@ -21,11 +21,11 @@ func NewUpdate(task task.Service, logger logger.Service) *Update {
 	}
 }
 
-func (c *Update) Run(arg string) {
+func (c *Update) Run(args string) {
 	idRegex := regexp.MustCompile(`\b\d+\b`)
-	taskID := idRegex.FindString(arg)
+	taskID := idRegex.FindString(args)
 	descriptionRegex := regexp.MustCompile(`"([^"]+)"`)
-	description := descriptionRegex.FindString(arg)
+	description := descriptionRegex.FindString(args)
 
 	if len(taskID) == 0 || len(description) == 0 {
 		c.logger.LogError("Wrong argument passed")
@@ -43,9 +43,9 @@ func (c *Update) Run(arg string) {
 	})
 
 	if updated {
-		c.logger.LogInfo(fmt.Sprintf(`Task %s updated`, taskID))
+		c.logger.LogSuccess(fmt.Sprintf(`Task %s updated`, taskID))
 	} else {
-		c.logger.LogError(fmt.Sprintf(`Failed to update %s`, taskID))
+		c.logger.LogWarning(fmt.Sprintf(`Failed to update %s`, taskID))
 	}
 
 }
