@@ -3,6 +3,7 @@ package task
 import (
 	"encoding/json"
 	"log"
+	"strconv"
 	"task-cli-go/internal/logger"
 	"task-cli-go/internal/storage"
 	"time"
@@ -61,7 +62,7 @@ func (t *Task) CreateTask(task TaskDTO) (bool, *TaskDTO) {
 		return false, nil
 	}
 
-	savedTaskString, err := t.storage.InsertOrUpdate(byteData)
+	savedTaskString, err := t.storage.Upsert(strconv.Itoa(id), byteData)
 
 	if err != nil || savedTaskString == nil {
 		t.logger.LogError(ErrUnableToCreateNewTask.Error())
@@ -120,8 +121,47 @@ func (t *Task) GetAllTasks() []TaskDTO {
 	return list
 }
 
-func (t *Task) UpdateTask(task UpdateTaskDTO) bool {
-	log.Println(task)
+func (t *Task) UpdateTask(updateDto UpdateTaskDTO) bool {
+	taskID := strconv.Itoa(updateDto.ID)
+	dbTask, err := t.storage.GetOneBy(taskID)
+
+	if err != nil {
+		t.logger.LogError(err.Error())
+
+		return false
+	}
+
+	var task TaskDTO
+
+	err = json.Unmarshal([]byte(*dbTask), &task)
+
+	if err != nil {
+		t.logger.LogError(err.Error())
+
+		return false
+	}
+
+	timeNow := time.Now().String()
+
+	updateTask := TaskDTO{
+		Id:          task.Id,
+		Description: *updateDto.Description,
+		Status:      task.Status,
+		UpdatedAt:   &timeNow,
+		CreatedAt:   task.CreatedAt,
+	}
+
+	byteData, err := json.Marshal(updateTask)
+
+	if err != nil {
+		t.logger.LogError(err.Error())
+
+		return false
+	}
+
+	data, err := t.storage.Upsert(taskID, byteData)
+
+	log.Println(data)
 
 	return true
 }

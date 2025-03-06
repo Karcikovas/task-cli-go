@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strconv"
 	"task-cli-go/internal/logger"
 )
 
@@ -22,7 +21,7 @@ type Data struct {
 type Repository interface {
 	GetOneBy(id string) (*string, error)
 	GetAll() (Data, error)
-	InsertOrUpdate(v []byte) (*string, error)
+	Upsert(id string, v []byte) (*string, error)
 	Delete(id string) (bool, error)
 }
 
@@ -53,7 +52,7 @@ func (s *Storage) GetOneBy(id string) (*string, error) {
 	return nil, ErrUnableToGetByID
 }
 
-func (s *Storage) InsertOrUpdate(v []byte) (*string, error) {
+func (s *Storage) Upsert(id string, v []byte) (*string, error) {
 	data, err := s.readFile()
 
 	if err != nil {
@@ -70,9 +69,11 @@ func (s *Storage) InsertOrUpdate(v []byte) (*string, error) {
 		}
 	}
 
-	id := data.Total + 1
-	data.Total = data.Total + 1
-	data.Records[strconv.Itoa(id)] = string(v)
+	if len(data.Records[id]) == 0 {
+		data.Total = data.Total + 1
+	}
+
+	data.Records[id] = string(v)
 
 	update, err := s.writeFile(data)
 
