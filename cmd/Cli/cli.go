@@ -1,44 +1,53 @@
 package Cli
 
 import (
-	taskCli "task-cli-go/cmd/Cli/task"
+	"fmt"
+	"log"
 	"task-cli-go/internal/console"
-	"task-cli-go/internal/logger"
-	"task-cli-go/internal/task"
 )
 
 type Cli struct {
-	commands map[string]console.Command
+	command  console.Command
+	commands []console.Command
 }
 
-func NewCLi(
-	task task.Service,
-	logger logger.Service,
-) *Cli {
+func NewCLi(command console.Command) *Cli {
 	return &Cli{
-		commands: map[string]console.Command{
-			"add":         taskCli.NewAdd(task, logger),
-			"update":      taskCli.NewUpdate(task, logger),
-			"delete":      taskCli.NewDelete(task, logger),
-			"list":        taskCli.NewList(task, logger),
-			"mark-done":   taskCli.NewDone(task, logger),
-			"in-progress": taskCli.NewProgress(task, logger),
-		},
+		command: command,
 	}
 }
 
-func (c *Cli) GetCommands() []console.Command {
-	var commands = make([]console.Command, 0)
+func (c *Cli) SetCommand(command console.Command) {
+	c.command = command
+}
+
+func (c *Cli) RunCommand(args string) {
+	c.command.Run(args)
+}
+
+func (c *Cli) SetAvailableCommands(commands ...console.Command) {
+	c.commands = commands
+}
+
+func (c *Cli) AvailableCommands() {
 
 	for _, command := range c.commands {
-		commands = append(commands, command)
-	}
+		c := command.GetCmd()
 
-	return commands
+		log.Println(fmt.Sprintf("task-Cli: %s --- %s", c.Name, c.Description))
+	}
 }
 
-func (c *Cli) CompleteCommand(name string) console.Command {
-	command := c.commands[name]
+func (c *Cli) FindCommand(name string) console.Command {
+	var command console.Command = nil
+
+	for _, v := range c.commands {
+		cmd := v.GetCmd()
+
+		if cmd.Name == name {
+			command = v
+		}
+	}
 
 	return command
 }

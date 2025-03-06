@@ -4,54 +4,51 @@ import (
 	"bufio"
 	"os"
 	"strings"
-	"task-cli-go/cmd"
 	"task-cli-go/cmd/Cli"
+	cmdTask "task-cli-go/cmd/Cli/task"
 	"task-cli-go/internal/logger"
 	"task-cli-go/internal/storage"
 	"task-cli-go/internal/task"
 )
 
 func main() {
-	//TODO: move this like wire function for building dependencies
 	l := logger.NewLogger()
-
 	s := storage.CreateNewStorage(l)
 	t := task.CreateNewTask(s, l)
-	cli := Cli.NewCLi(t, l)
-	r := cmd.NewRoot(cli.GetCommands())
+	cli := Cli.NewCLi(cmdTask.NewAdd(t, l))
+	cli.SetAvailableCommands(
+		cmdTask.NewAdd(t, l),
+		cmdTask.NewDelete(t, l),
+		cmdTask.NewDone(t, l),
+		cmdTask.NewList(t, l),
+		cmdTask.NewProgress(t, l),
+		cmdTask.NewUpdate(t, l),
+	)
 
 	scanner := bufio.NewScanner(os.Stdin)
+	cli.AvailableCommands()
 
 	for {
-		r.AvailableCommands()
-
 		scanner.Scan()
 		input := scanner.Text()
-
 		parts := strings.Fields(input)
+
 		if len(parts) == 0 {
 			continue
 		}
 
-		command := parts[0]
+		c := parts[0]
 		args := strings.Join(parts[1:], " ")
 
-		switch command {
-		case "add":
-			cli.CompleteCommand("add").Run(args)
-		case "update":
-			cli.CompleteCommand("update").Run(args)
-		case "delete":
-			cli.CompleteCommand("delete").Run(args)
-		case "list":
-			cli.CompleteCommand("list").Run(args)
-		case "mark-done":
-			cli.CompleteCommand("mark-done").Run(args)
-		case "in-progress":
-			cli.CompleteCommand("in-progress").Run(args)
-		default:
+		command := cli.FindCommand(c)
+
+		if command != nil {
+			cli.SetCommand(command)
+			cli.RunCommand(args)
+		} else {
 			l.LogError("Command not found")
-			r.AvailableCommands()
+			cli.AvailableCommands()
 		}
+
 	}
 }
