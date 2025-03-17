@@ -14,8 +14,9 @@ var FileLocation = fmt.Sprintf(`%s/storage.%s`, Location, Format)
 type RecordMap = map[string]string
 
 type Data struct {
-	Total   int       `json:"total"`
-	Records RecordMap `json:"records"`
+	Total             int       `json:"total"`
+	AutoIncrementedId int       `json:"AutoIncrementedId"`
+	Records           RecordMap `json:"records"`
 }
 
 type Repository interface {
@@ -23,6 +24,7 @@ type Repository interface {
 	GetAll() (Data, error)
 	Upsert(id string, v []byte) (*string, error)
 	Delete(id string) (bool, error)
+	GenerateID(data Data) int
 }
 
 type Storage struct {
@@ -70,6 +72,7 @@ func (s *Storage) Upsert(id string, v []byte) (*string, error) {
 	}
 
 	if len(data.Records[id]) == 0 {
+		data.AutoIncrementedId = data.AutoIncrementedId + 1
 		data.Total = data.Total + 1
 	}
 
@@ -112,13 +115,18 @@ func (s *Storage) GetAll() (Data, error) {
 	return s.readFile()
 }
 
+func (s *Storage) GenerateID(data Data) int {
+	return data.AutoIncrementedId + 1
+}
+
 func (s *Storage) readFile() (Data, error) {
 	content, err := os.ReadFile(FileLocation)
 
 	if err != nil {
 		return Data{
-			Total:   0,
-			Records: make(RecordMap),
+			Total:             0,
+			AutoIncrementedId: 0,
+			Records:           make(RecordMap),
 		}, nil
 	}
 

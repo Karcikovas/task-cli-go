@@ -43,7 +43,7 @@ func (t *Task) CreateTask(task TaskDTO) (bool, *TaskDTO) {
 	}
 
 	now := time.Now().String()
-	id := data.Total + 1
+	id := t.storage.GenerateID(data)
 
 	newTask := TaskDTO{
 		Id:          &id,
