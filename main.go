@@ -21,6 +21,7 @@ func main() {
 		cmdTask.NewDelete(t, l),
 		cmdTask.NewDone(t, l),
 		cmdTask.NewList(t, l),
+		cmdTask.NewFilter(t, l),
 		cmdTask.NewProgress(t, l),
 		cmdTask.NewUpdate(t, l),
 	)
