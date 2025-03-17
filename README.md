@@ -9,13 +9,10 @@ Working on project from roadmap.sh
 - List all tasks
 - List all tasks that are done
 - List all tasks that are not done
-- List all tasks that are in progress
+- List all tasks that are in progress 
+- List by status (done, not done, in progress)
 
-
-Missing feature list:
-1. List by status (done, not done, in progress)
-
-Functional requirements:
+Non Functional requirements:
 1. Add Tests for storage service unit test
 2. Add Tests for Task Service unit test
 3. Add Integration test for Commands

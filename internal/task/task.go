@@ -19,6 +19,7 @@ type Service interface {
 	DeleteTask(taskID string) bool
 	UpdateTask(task UpdateTaskDTO) bool
 	GetAllTasks() []TaskDTO
+	FilterByStatus(status string) []TaskDTO
 }
 
 type Task struct {
@@ -115,6 +116,35 @@ func (t *Task) GetAllTasks() []TaskDTO {
 		}
 
 		list = append(list, task)
+	}
+
+	return list
+}
+
+func (t *Task) FilterByStatus(status string) []TaskDTO {
+	var list []TaskDTO
+	data, err := t.storage.GetAll()
+
+	if err != nil {
+		t.logger.LogError(ErrUnableToGetAllTask.Error())
+
+		return list
+	}
+
+	for _, value := range data.Records {
+		var task TaskDTO
+
+		err := json.Unmarshal([]byte(value), &task)
+
+		if err != nil {
+			t.logger.LogError(ErrUnableToGetAllTask.Error())
+
+			return []TaskDTO{}
+		}
+
+		if task.Status == status {
+			list = append(list, task)
+		}
 	}
 
 	return list

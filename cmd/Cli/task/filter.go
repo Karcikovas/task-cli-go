@@ -50,11 +50,11 @@ func (c *Filter) Run(args string) {
 
 	switch status {
 	case task.DONE:
-		tasks = append(tasks, c.service.GetAllTasks()...)
+		tasks = append(tasks, c.service.FilterByStatus(task.DONE)...)
 	case task.InPROGRESS:
-		tasks = append(tasks, c.service.GetAllTasks()...)
+		tasks = append(tasks, c.service.FilterByStatus(task.InPROGRESS)...)
 	case task.TODO:
-		tasks = append(tasks, c.service.GetAllTasks()...)
+		tasks = append(tasks, c.service.FilterByStatus(task.TODO)...)
 	default:
 		c.logger.LogError("Wrong Status type was passed")
 
