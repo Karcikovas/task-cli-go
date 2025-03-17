@@ -47,11 +47,9 @@ func (c *Update) Run(args string) {
 	} else {
 		c.logger.LogWarning(fmt.Sprintf(`Failed to update %s`, taskID))
 	}
-
 }
 
 func (c *Update) GetCmd() *console.Console {
-
 	command := console.NewConsoleCommand("update", "update item based on item id", c.Run)
 
 	return command

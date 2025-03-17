@@ -12,3 +12,7 @@ build: deps
 PHONY: serve
 serve: build
 	bin/main
+
+PHONY:lint
+lint:
+	golangci-lint run ./...

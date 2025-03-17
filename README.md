@@ -15,7 +15,6 @@ Working on project from roadmap.sh
 Non Functional requirements:
 1. Add Tests for storage service unit test
 2. Add Tests for Task Service unit test
-3. Add Integration test for Commands
-4. Update Dependency wire and move all dependencies out of main file
-5. golint.yaml with proper go linter rules 
-6. Update README.md
+3. Add Integration test for Commands 
+4. golint.yml with proper go linter rules
+5. Update README.md

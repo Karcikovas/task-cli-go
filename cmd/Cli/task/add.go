@@ -47,7 +47,6 @@ func (c *Add) Run(args string) {
 }
 
 func (c *Add) GetCmd() *console.Console {
-
 	command := console.NewConsoleCommand("add", "add new item into todo list", c.Run)
 
 	return command

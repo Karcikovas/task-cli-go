@@ -6,13 +6,9 @@ import (
 )
 
 func main() {
-	app, err := NewApp()
+	app := NewApp()
 
-	if err != nil {
-		panic(err)
-	}
-
-	err = app.Start()
+	err := app.Start()
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, err.Error())

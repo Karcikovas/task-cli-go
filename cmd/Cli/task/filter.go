@@ -1,6 +1,7 @@
 package task
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -77,7 +78,7 @@ func extractValue(input string) (string, error) {
 	var flag, value string
 	n, err := fmt.Sscanf(input, "%s %q", &flag, &value)
 	if err != nil || n != 2 {
-		return "", fmt.Errorf("invalid format")
+		return "", errors.New("invalid format")
 	}
 	return value, nil
 }

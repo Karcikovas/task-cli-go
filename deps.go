@@ -8,7 +8,7 @@ import (
 	"task-cli-go/internal/task"
 )
 
-func NewApp() (*Application, error) {
+func NewApp() *Application {
 	log := logger.NewLogger()
 	s := storage.CreateNewStorage(log)
 	t := task.CreateNewTask(s, log)
@@ -25,5 +25,5 @@ func NewApp() (*Application, error) {
 
 	application := NewApplication(log, *cli)
 
-	return application, nil
+	return application
 }
