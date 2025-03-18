@@ -28,7 +28,7 @@ func (c *Filter) Run(args string) {
 	flag := flagFilterRegex.FindString(args)
 
 	if len(flag) == 0 {
-		c.logger.LogError("Missing status flag")
+		c.logger.LogError(ErrMissingStatusFlag.Error())
 
 		return
 	}
@@ -37,13 +37,13 @@ func (c *Filter) Run(args string) {
 	status := statusRegex.FindString(args)
 
 	if len(status) == 0 {
-		c.logger.LogError("Empty status")
+		c.logger.LogError(ErrEmptyStatus.Error())
 	}
 
 	status, err := extractValue(args)
 
 	if err != nil {
-		c.logger.LogError("Failed to extract status")
+		c.logger.LogError(ErrFailedToExtractStatus.Error())
 
 		return
 	}
@@ -58,7 +58,7 @@ func (c *Filter) Run(args string) {
 	case task.TODO:
 		tasks = append(tasks, c.service.FilterByStatus(task.TODO)...)
 	default:
-		c.logger.LogError("Wrong Status type was passed")
+		c.logger.LogError(ErrWrongStatusTypePassed.Error())
 
 		return
 	}
@@ -81,7 +81,6 @@ func (c *Filter) GetCmd() *console.Console {
 	return command
 }
 
-// TODO: move this to library
 func extractValue(input string) (string, error) {
 	var flag, value string
 	n, err := fmt.Sscanf(input, "%s %q", &flag, &value)

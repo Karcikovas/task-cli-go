@@ -25,7 +25,7 @@ func (c *Delete) Run(args string) {
 	taskID := idRegex.FindString(args)
 
 	if len(taskID) == 0 {
-		c.logger.LogError("Wrong argument passed")
+		c.logger.LogError(ErrWrongArgumentPassed.Error())
 	}
 
 	deleted := c.task.DeleteTask(args)
@@ -33,7 +33,7 @@ func (c *Delete) Run(args string) {
 	if deleted {
 		c.logger.LogSuccess(fmt.Sprintf(`Task %s deleted`, args))
 	} else {
-		c.logger.LogWarning("Unable to Delete Task")
+		c.logger.LogWarning(ErrUnableDeleteTask.Error())
 	}
 }
 

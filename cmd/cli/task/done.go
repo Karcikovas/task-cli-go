@@ -27,7 +27,7 @@ func (c *Done) Run(args string) {
 	taskID := idRegex.FindString(args)
 
 	if len(taskID) == 0 {
-		c.logger.LogError("Wrong argument passed")
+		c.logger.LogError(ErrWrongArgumentPassed.Error())
 	}
 	id, err := strconv.Atoi(taskID)
 

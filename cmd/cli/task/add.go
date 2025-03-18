@@ -27,7 +27,7 @@ func (c *Add) Run(args string) {
 	description := descriptionRegex.FindString(args)
 
 	if len(description) == 0 {
-		c.logger.LogError("Wrong argument passed")
+		c.logger.LogError(ErrWrongArgumentPassed.Error())
 
 		return
 	}
@@ -43,7 +43,7 @@ func (c *Add) Run(args string) {
 	if saved {
 		c.logger.LogSuccess(fmt.Sprintf(`Task ID: %s`, strconv.Itoa(*t.ID)))
 	} else {
-		c.logger.LogWarning("FAILED to Add task")
+		c.logger.LogWarning(ErrFailedAddTask.Error())
 	}
 }
 

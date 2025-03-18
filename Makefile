@@ -13,6 +13,10 @@ PHONY: serve
 serve: build
 	bin/main
 
+PHONY: dev
+dev: lint
+	go run ./
+
 PHONY:lint
 lint:
 	golangci-lint run ./...
