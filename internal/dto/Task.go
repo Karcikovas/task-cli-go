@@ -1,4 +1,4 @@
-package task
+package dto
 
 type TaskDTO struct {
 	ID          *int    `json:"id"`

@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 	"task-cli-go/internal/console"
+	"task-cli-go/internal/dto"
 	"task-cli-go/internal/logger"
 	"task-cli-go/internal/task"
 )
@@ -47,7 +48,7 @@ func (c *Filter) Run(args string) {
 		return
 	}
 
-	var tasks []task.TaskDTO
+	var tasks []dto.TaskDTO
 
 	switch status {
 	case task.DONE:

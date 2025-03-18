@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"task-cli-go/internal/console"
+	"task-cli-go/internal/dto"
 	"task-cli-go/internal/logger"
 	"task-cli-go/internal/task"
 )
@@ -34,7 +35,7 @@ func (c *Progress) Run(args string) {
 		c.logger.LogError(err.Error())
 	}
 
-	updated := c.task.UpdateTask(task.UpdateTaskDTO{
+	updated := c.task.UpdateTask(dto.UpdateTaskDTO{
 		ID:     id,
 		Status: &task.InPROGRESS,
 	})

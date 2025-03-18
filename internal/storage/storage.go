@@ -99,7 +99,7 @@ func (s *Storage) Delete(id string) (bool, error) {
 	}
 
 	delete(data.Records, id)
-	data.Total -= 1
+	data.Total--
 
 	update, err := s.writeFile(data)
 
@@ -120,9 +120,9 @@ func (s *Storage) GenerateID(data Data) int {
 }
 
 func (s *Storage) readFile() (Data, error) {
-	content, err := os.ReadFile(FileLocation)
+	content, _ := os.ReadFile(FileLocation)
 
-	if err != nil {
+	if content == nil {
 		return Data{
 			Total:             0,
 			AutoIncrementedID: 0,
@@ -132,7 +132,7 @@ func (s *Storage) readFile() (Data, error) {
 
 	storage := Data{}
 
-	err = json.Unmarshal(content, &storage)
+	err := json.Unmarshal(content, &storage)
 	if err != nil {
 		s.logger.LogError(err.Error())
 		return storage, ErrUnableToUnmarshalStorage

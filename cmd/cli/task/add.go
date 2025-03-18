@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"task-cli-go/internal/console"
+	"task-cli-go/internal/dto"
 	"task-cli-go/internal/logger"
 	"task-cli-go/internal/task"
 )
@@ -31,7 +32,7 @@ func (c *Add) Run(args string) {
 		return
 	}
 
-	saved, t := c.service.CreateTask(task.TaskDTO{
+	saved, t := c.service.CreateTask(dto.TaskDTO{
 		ID:          nil,
 		Description: args,
 		Status:      "In Progress",

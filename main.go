@@ -11,7 +11,7 @@ func main() {
 	err := app.Start()
 
 	if err != nil {
-		_, err = fmt.Fprintf(os.Stderr, err.Error())
+		_, err = fmt.Fprintln(os.Stderr, err)
 
 		if err != nil {
 			os.Exit(1)

@@ -3,6 +3,7 @@ package task
 import (
 	"encoding/json"
 	"strconv"
+	"task-cli-go/internal/dto"
 	"task-cli-go/internal/logger"
 	"task-cli-go/internal/storage"
 	"time"
@@ -15,11 +16,11 @@ var (
 )
 
 type Service interface {
-	CreateTask(task TaskDTO) (bool, *TaskDTO)
+	CreateTask(task dto.TaskDTO) (bool, *dto.TaskDTO)
 	DeleteTask(taskID string) bool
-	UpdateTask(task UpdateTaskDTO) bool
-	GetAllTasks() []TaskDTO
-	FilterByStatus(status string) []TaskDTO
+	UpdateTask(task dto.UpdateTaskDTO) bool
+	GetAllTasks() []dto.TaskDTO
+	FilterByStatus(status string) []dto.TaskDTO
 }
 
 type Task struct {
@@ -34,7 +35,7 @@ func CreateNewTask(storage storage.Repository, logger logger.Service) Service {
 	}
 }
 
-func (t *Task) CreateTask(task TaskDTO) (bool, *TaskDTO) {
+func (t *Task) CreateTask(task dto.TaskDTO) (bool, *dto.TaskDTO) {
 	data, err := t.storage.GetAll()
 
 	if err != nil {
@@ -46,7 +47,7 @@ func (t *Task) CreateTask(task TaskDTO) (bool, *TaskDTO) {
 	now := time.Now().Format(time.RFC3339)
 	id := t.storage.GenerateID(data)
 
-	newTask := TaskDTO{
+	newTask := dto.TaskDTO{
 		ID:          &id,
 		Description: task.Description,
 		Status:      TODO,
@@ -69,7 +70,7 @@ func (t *Task) CreateTask(task TaskDTO) (bool, *TaskDTO) {
 
 		return false, nil
 	}
-	var savedTask TaskDTO
+	var savedTask dto.TaskDTO
 
 	err = json.Unmarshal([]byte(*savedTaskString), &savedTask)
 
@@ -94,8 +95,8 @@ func (t *Task) DeleteTask(taskID string) bool {
 	return true
 }
 
-func (t *Task) GetAllTasks() []TaskDTO {
-	var list []TaskDTO
+func (t *Task) GetAllTasks() []dto.TaskDTO {
+	var list []dto.TaskDTO
 	data, err := t.storage.GetAll()
 
 	if err != nil {
@@ -105,14 +106,14 @@ func (t *Task) GetAllTasks() []TaskDTO {
 	}
 
 	for _, value := range data.Records {
-		var task TaskDTO
+		var task dto.TaskDTO
 
 		err = json.Unmarshal([]byte(value), &task)
 
 		if err != nil {
 			t.logger.LogError(ErrUnableToGetAllTask.Error())
 
-			return []TaskDTO{}
+			return []dto.TaskDTO{}
 		}
 
 		list = append(list, task)
@@ -121,8 +122,8 @@ func (t *Task) GetAllTasks() []TaskDTO {
 	return list
 }
 
-func (t *Task) FilterByStatus(status string) []TaskDTO {
-	var list []TaskDTO
+func (t *Task) FilterByStatus(status string) []dto.TaskDTO {
+	var list []dto.TaskDTO
 	data, err := t.storage.GetAll()
 
 	if err != nil {
@@ -132,14 +133,14 @@ func (t *Task) FilterByStatus(status string) []TaskDTO {
 	}
 
 	for _, value := range data.Records {
-		var task TaskDTO
+		var task dto.TaskDTO
 
 		err = json.Unmarshal([]byte(value), &task)
 
 		if err != nil {
 			t.logger.LogError(ErrUnableToGetAllTask.Error())
 
-			return []TaskDTO{}
+			return []dto.TaskDTO{}
 		}
 
 		if task.Status == status {
@@ -150,7 +151,7 @@ func (t *Task) FilterByStatus(status string) []TaskDTO {
 	return list
 }
 
-func (t *Task) UpdateTask(updateDto UpdateTaskDTO) bool {
+func (t *Task) UpdateTask(updateDto dto.UpdateTaskDTO) bool {
 	taskID := strconv.Itoa(updateDto.ID)
 	dbTask, err := t.storage.GetOneBy(taskID)
 
@@ -160,7 +161,7 @@ func (t *Task) UpdateTask(updateDto UpdateTaskDTO) bool {
 		return false
 	}
 
-	var task TaskDTO
+	var task dto.TaskDTO
 
 	err = json.Unmarshal([]byte(*dbTask), &task)
 
@@ -172,7 +173,7 @@ func (t *Task) UpdateTask(updateDto UpdateTaskDTO) bool {
 
 	timeNow := time.Now().Format(time.RFC3339)
 
-	updateTask := TaskDTO{
+	updateTask := dto.TaskDTO{
 		ID:          task.ID,
 		Description: task.Description,
 		Status:      task.Status,
