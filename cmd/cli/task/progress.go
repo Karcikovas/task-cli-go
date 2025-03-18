@@ -40,9 +40,9 @@ func (c *Progress) Run(args string) {
 	})
 
 	if updated {
-		c.logger.LogSuccess(fmt.Sprintf(`Task %s marked as done`, taskID))
+		c.logger.LogSuccess(fmt.Sprintf(`Task %s marked as InProgress`, taskID))
 	} else {
-		c.logger.LogWarning(fmt.Sprintf(`Failed to mark task %s as done`, taskID))
+		c.logger.LogWarning(fmt.Sprintf(`Failed to mark task %s as InProgress`, taskID))
 	}
 }
 

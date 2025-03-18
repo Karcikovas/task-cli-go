@@ -1,12 +1,9 @@
 package logger
 
-import "log"
-
-var reset = "\033[0m"
-var red = "\033[31m"
-var warning = "\033[33m"
-var white = "\033[97m"
-var green = "\033[32m"
+import (
+	"context"
+	"log/slog"
+)
 
 type Service interface {
 	LogInfo(message string)
@@ -15,25 +12,44 @@ type Service interface {
 	LogError(message string)
 }
 
+type Colors struct {
+	reset   string
+	red     string
+	warning string
+	white   string
+	green   string
+}
+
 type Logger struct {
+	colors Colors
+	logger *slog.Logger
 }
 
 func NewLogger() Service {
-	return &Logger{}
+	return &Logger{
+		logger: slog.Default(),
+		colors: Colors{
+			reset:   "\u001B[0m",
+			red:     "\u001B[31m",
+			warning: "\u001B[33m",
+			white:   "\u001B[97m",
+			green:   "\u001B[32m",
+		},
+	}
 }
 
 func (l *Logger) LogSuccess(message string) {
-	log.Println(green + message + reset)
+	l.logger.Log(context.Background(), slog.LevelInfo, l.colors.green+message+l.colors.reset)
 }
 
 func (l *Logger) LogInfo(message string) {
-	log.Println(white + message + reset)
+	l.logger.Log(context.Background(), slog.LevelInfo, l.colors.white+message+l.colors.reset)
 }
 
 func (l *Logger) LogWarning(message string) {
-	log.Println(warning + message + reset)
+	l.logger.Log(context.Background(), slog.LevelWarn, l.colors.warning+message+l.colors.reset)
 }
 
 func (l *Logger) LogError(message string) {
-	log.Println(red + message + reset)
+	l.logger.Log(context.Background(), slog.LevelError, l.colors.red+message+l.colors.reset)
 }

@@ -15,7 +15,7 @@ type RecordMap = map[string]string
 
 type Data struct {
 	Total             int       `json:"total"`
-	AutoIncrementedId int       `json:"AutoIncrementedId"`
+	AutoIncrementedID int       `json:"AutoIncrementedID"`
 	Records           RecordMap `json:"records"`
 }
 
@@ -55,10 +55,10 @@ func (s *Storage) GetOneBy(id string) (*string, error) {
 }
 
 func (s *Storage) Upsert(id string, v []byte) (*string, error) {
-	data, err := s.readFile()
+	data, e := s.readFile()
 
-	if err != nil {
-		s.logger.LogError(err.Error())
+	if e != nil {
+		s.logger.LogError(e.Error())
 		return nil, ErrUnableToInsertOrUpdate
 	}
 
@@ -72,8 +72,8 @@ func (s *Storage) Upsert(id string, v []byte) (*string, error) {
 	}
 
 	if len(data.Records[id]) == 0 {
-		data.AutoIncrementedId = data.AutoIncrementedId + 1
-		data.Total = data.Total + 1
+		data.AutoIncrementedID++
+		data.Total++
 	}
 
 	data.Records[id] = string(v)
@@ -116,7 +116,7 @@ func (s *Storage) GetAll() (Data, error) {
 }
 
 func (s *Storage) GenerateID(data Data) int {
-	return data.AutoIncrementedId + 1
+	return data.AutoIncrementedID + 1
 }
 
 func (s *Storage) readFile() (Data, error) {
@@ -125,7 +125,7 @@ func (s *Storage) readFile() (Data, error) {
 	if err != nil {
 		return Data{
 			Total:             0,
-			AutoIncrementedId: 0,
+			AutoIncrementedID: 0,
 			Records:           make(RecordMap),
 		}, nil
 	}
@@ -148,7 +148,7 @@ func (s *Storage) writeFile(data Data) (bool, error) {
 		return false, ErrUnableToMarshalStorage
 	}
 
-	err = os.WriteFile(FileLocation, bytes, 0644)
+	err = os.WriteFile(FileLocation, bytes, 0600)
 	if err != nil {
 		s.logger.LogError(err.Error())
 		return false, ErrUnableWriteToFile

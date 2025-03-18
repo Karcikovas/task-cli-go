@@ -4,16 +4,16 @@ import (
 	"bufio"
 	"os"
 	"strings"
-	"task-cli-go/cmd/Cli"
+	"task-cli-go/cmd/cli"
 	"task-cli-go/internal/logger"
 )
 
 type Application struct {
 	logger logger.Service
-	cli    Cli.Cli
+	cli    cli.Cli
 }
 
-func NewApplication(logger logger.Service, cli Cli.Cli) *Application {
+func NewApplication(logger logger.Service, cli cli.Cli) *Application {
 	return &Application{
 		logger,
 		cli,

@@ -32,7 +32,7 @@ func (c *Add) Run(args string) {
 	}
 
 	saved, t := c.service.CreateTask(task.TaskDTO{
-		Id:          nil,
+		ID:          nil,
 		Description: args,
 		Status:      "In Progress",
 		CreatedAt:   nil,
@@ -40,7 +40,7 @@ func (c *Add) Run(args string) {
 	})
 
 	if saved {
-		c.logger.LogSuccess(fmt.Sprintf(`Task ID: %s`, strconv.Itoa(*t.Id)))
+		c.logger.LogSuccess(fmt.Sprintf(`Task ID: %s`, strconv.Itoa(*t.ID)))
 	} else {
 		c.logger.LogWarning("FAILED to Add task")
 	}

@@ -1,7 +1,7 @@
 package task
 
 type TaskDTO struct {
-	Id          *int    `json:"id"`
+	ID          *int    `json:"id"`
 	Description string  `json:"description"`
 	Status      string  `json:"status"`
 	CreatedAt   *string `json:"createdAt"`

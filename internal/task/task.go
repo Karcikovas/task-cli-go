@@ -43,11 +43,11 @@ func (t *Task) CreateTask(task TaskDTO) (bool, *TaskDTO) {
 		return false, nil
 	}
 
-	now := time.Now().String()
+	now := time.Now().Format(time.RFC3339)
 	id := t.storage.GenerateID(data)
 
 	newTask := TaskDTO{
-		Id:          &id,
+		ID:          &id,
 		Description: task.Description,
 		Status:      TODO,
 		CreatedAt:   &now,
@@ -107,7 +107,7 @@ func (t *Task) GetAllTasks() []TaskDTO {
 	for _, value := range data.Records {
 		var task TaskDTO
 
-		err := json.Unmarshal([]byte(value), &task)
+		err = json.Unmarshal([]byte(value), &task)
 
 		if err != nil {
 			t.logger.LogError(ErrUnableToGetAllTask.Error())
@@ -134,7 +134,7 @@ func (t *Task) FilterByStatus(status string) []TaskDTO {
 	for _, value := range data.Records {
 		var task TaskDTO
 
-		err := json.Unmarshal([]byte(value), &task)
+		err = json.Unmarshal([]byte(value), &task)
 
 		if err != nil {
 			t.logger.LogError(ErrUnableToGetAllTask.Error())
@@ -170,10 +170,10 @@ func (t *Task) UpdateTask(updateDto UpdateTaskDTO) bool {
 		return false
 	}
 
-	timeNow := time.Now().String()
+	timeNow := time.Now().Format(time.RFC3339)
 
 	updateTask := TaskDTO{
-		Id:          task.Id,
+		ID:          task.ID,
 		Description: task.Description,
 		Status:      task.Status,
 		UpdatedAt:   &timeNow,
@@ -197,6 +197,12 @@ func (t *Task) UpdateTask(updateDto UpdateTaskDTO) bool {
 	}
 
 	_, err = t.storage.Upsert(taskID, byteData)
+
+	if err != nil {
+		t.logger.LogError(err.Error())
+
+		return false
+	}
 
 	return true
 }

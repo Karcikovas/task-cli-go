@@ -1,19 +1,24 @@
-package Cli
+package cli
 
 import (
 	"fmt"
-	"log"
 	"task-cli-go/internal/console"
+	"task-cli-go/internal/logger"
 )
 
 type Cli struct {
 	command  console.Command
 	commands []console.Command
+	logger   logger.Service
 }
 
-func NewCLi(command console.Command) *Cli {
+func NewCLi(
+	command console.Command,
+	logger logger.Service,
+) *Cli {
 	return &Cli{
 		command: command,
+		logger:  logger,
 	}
 }
 
@@ -31,14 +36,19 @@ func (c *Cli) SetAvailableCommands(commands ...console.Command) {
 
 func (c *Cli) AvailableCommands() {
 	for _, command := range c.commands {
-		c := command.GetCmd()
+		cmd := command.GetCmd()
 
-		log.Println(fmt.Sprintf("task-Cli: %s --- %s", c.Name, c.Description))
+		c.logger.LogInfo(
+			fmt.Sprintf(
+				"task-cli: %s --- %s",
+				cmd.Name,
+				cmd.Description,
+			))
 	}
 }
 
 func (c *Cli) FindCommand(name string) console.Command {
-	var command console.Command = nil
+	var command console.Command
 
 	for _, v := range c.commands {
 		cmd := v.GetCmd()

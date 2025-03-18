@@ -63,7 +63,14 @@ func (c *Filter) Run(args string) {
 	}
 
 	for _, t := range tasks {
-		c.logger.LogInfo(fmt.Sprintf(`ID: %s Description: %s Status: %s Updated: %s`, strconv.Itoa(*t.Id), t.Description, t.Status, t.UpdatedAt))
+		c.logger.LogInfo(
+			fmt.Sprintf(
+				`ID: %s Description: %s Status: %s Updated: %s`,
+				strconv.Itoa(*t.ID),
+				t.Description,
+				t.Status,
+				*t.UpdatedAt,
+			))
 	}
 }
 
